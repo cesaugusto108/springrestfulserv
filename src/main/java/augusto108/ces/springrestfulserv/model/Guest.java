@@ -1,9 +1,23 @@
 package augusto108.ces.springrestfulserv.model;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "tb_guest")
 public class Guest extends BaseEntity {
+    @Embedded
     private Name name;
+
+    @Embedded
     private Address address;
+
+    @Embedded
     private Telephone telephone;
+
+    @Column(name = "guest_email")
     private String email;
 
     public Guest() {

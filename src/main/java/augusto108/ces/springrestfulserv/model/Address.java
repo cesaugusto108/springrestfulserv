@@ -1,8 +1,17 @@
 package augusto108.ces.springrestfulserv.model;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class Address {
+    @Column(name = "guest_address_street")
     private String street;
+
+    @Column(name = "guest_address_number")
     private Integer number;
+
+    @Column(name = "guest_address_city")
     private String city;
 
     public Address() {

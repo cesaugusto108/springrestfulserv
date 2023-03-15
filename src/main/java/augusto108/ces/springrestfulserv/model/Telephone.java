@@ -1,6 +1,11 @@
 package augusto108.ces.springrestfulserv.model;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class Telephone {
+    @Column(name = "guest_telephone")
     private String telephone;
 
     public Telephone() {

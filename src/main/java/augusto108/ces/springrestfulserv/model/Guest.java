@@ -56,6 +56,7 @@ public class Guest extends BaseEntity {
                 ", " +
                 telephone +
                 ", " +
-                email;
+                email +
+                "]";
     }
 }

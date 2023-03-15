@@ -64,8 +64,10 @@ public class Guest extends BaseEntity {
 
     @Override
     public String toString() {
-        return super.toString() + name +
-                "[ " +
+        return super.toString() +
+                " - " +
+                name +
+                " [" +
                 address +
                 ", " +
                 telephone +

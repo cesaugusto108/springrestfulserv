@@ -1,17 +1,15 @@
 package augusto108.ces.springrestfulserv.controllers;
 
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import augusto108.ces.springrestfulserv.model.Guest;
 import augusto108.ces.springrestfulserv.services.GuestService;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/guests")
@@ -23,8 +21,12 @@ public class GuestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Guest> fetchGuest(@PathVariable Long id) {
-        return ResponseEntity.ok(service.fetchGuest(id));
+    public EntityModel<Guest> fetchGuest(@PathVariable Long id) {
+        return EntityModel.of(
+                service.fetchGuest(id),
+                linkTo(methodOn(GuestController.class).fetchGuest(id)).withSelfRel(),
+                linkTo(methodOn(GuestController.class).fetchAllGuests()).withRel("guests")
+        );
     }
 
     @GetMapping("/all")

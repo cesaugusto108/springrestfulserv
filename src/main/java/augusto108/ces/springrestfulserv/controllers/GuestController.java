@@ -2,11 +2,14 @@ package augusto108.ces.springrestfulserv.controllers;
 
 import augusto108.ces.springrestfulserv.model.Guest;
 import augusto108.ces.springrestfulserv.services.GuestService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -29,9 +32,25 @@ public class GuestController {
         );
     }
 
+    // this will return an aggregate root resource
     @GetMapping("/all")
-    public ResponseEntity<List<Guest>> fetchAllGuests() {
-        return ResponseEntity.ok(service.fetchGuests());
+    public CollectionModel<EntityModel<Guest>> fetchAllGuests() {
+        List<EntityModel<Guest>> guests = service.fetchGuests()
+                .stream()
+                .map(guest -> EntityModel.of(
+                                guest,
+                                linkTo(methodOn(GuestController.class).fetchGuest(guest.getId()))
+                                        .withSelfRel(),
+                                linkTo(methodOn(GuestController.class).fetchAllGuests())
+                                        .withRel("guests")
+                        )
+                )
+                .collect(Collectors.toList());
+
+        return CollectionModel.of(
+                guests,
+                linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel()
+        );
     }
 
     @RequestMapping(value = {"/save"}, method = {RequestMethod.POST, RequestMethod.PUT})

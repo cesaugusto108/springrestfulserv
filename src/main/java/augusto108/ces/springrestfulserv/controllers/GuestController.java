@@ -26,12 +26,12 @@ public class GuestController {
     }
 
     // this will return an aggregate root resource
-    @GetMapping("/all")
+    @GetMapping
     public CollectionModel<EntityModel<Guest>> fetchAllGuests() {
         return assembler.toCollectionModel(service.fetchGuests());
     }
 
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<EntityModel<Guest>> saveGuest(@RequestBody Guest guest) {
         EntityModel<Guest> entityModel = assembler.toModel(service.saveGuest(guest));
 

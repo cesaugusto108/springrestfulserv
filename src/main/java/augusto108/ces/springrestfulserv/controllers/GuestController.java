@@ -5,6 +5,7 @@ import augusto108.ces.springrestfulserv.model.Guest;
 import augusto108.ces.springrestfulserv.services.GuestService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,10 +31,12 @@ public class GuestController {
         return assembler.toCollectionModel(service.fetchGuests());
     }
 
-    @RequestMapping(value = {"/save"}, method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseEntity<Void> saveGuest(@RequestBody Guest guest) {
-        service.saveGuest(guest);
+    @PostMapping("/save")
+    public ResponseEntity<EntityModel<Guest>> saveGuest(@RequestBody Guest guest) {
+        EntityModel<Guest> entityModel = assembler.toModel(service.saveGuest(guest));
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 }

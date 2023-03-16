@@ -3,11 +3,10 @@ package augusto108.ces.springrestfulserv.services;
 import augusto108.ces.springrestfulserv.exceptions.GuestNotFoundException;
 import augusto108.ces.springrestfulserv.model.Guest;
 import augusto108.ces.springrestfulserv.repositories.GuestRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.stereotype.Service;
 
 @Service
 public class GuestServiceImpl implements GuestService {
@@ -15,11 +14,6 @@ public class GuestServiceImpl implements GuestService {
 
     public GuestServiceImpl(GuestRepository repository) {
         this.repository = repository;
-    }
-
-    @Override
-    public Guest saveGuest(Guest guest) {
-        return repository.save(guest);
     }
 
     @Override
@@ -39,6 +33,11 @@ public class GuestServiceImpl implements GuestService {
         }
 
         return guestList;
+    }
+
+    @Override
+    public Guest saveGuest(Guest guest) {
+        return repository.save(guest);
     }
 
     @Override

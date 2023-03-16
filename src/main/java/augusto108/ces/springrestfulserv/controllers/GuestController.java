@@ -33,7 +33,23 @@ public class GuestController {
 
     @PostMapping
     public ResponseEntity<EntityModel<Guest>> saveGuest(@RequestBody Guest guest) {
-        EntityModel<Guest> entityModel = assembler.toModel(service.saveGuest(guest));
+        return getEntityModelResponseEntity(guest);
+    }
+
+    @PutMapping
+    public ResponseEntity<EntityModel<Guest>> updateGuest(@RequestBody Guest guest) {
+        Guest g = service.fetchGuest(guest.getId());
+
+        g.setName(guest.getName());
+        g.setAddress(guest.getAddress());
+        g.setTelephone(guest.getTelephone());
+        g.setEmail(guest.getEmail());
+
+        return getEntityModelResponseEntity(g);
+    }
+
+    private ResponseEntity<EntityModel<Guest>> getEntityModelResponseEntity(Guest g) {
+        EntityModel<Guest> entityModel = assembler.toModel(service.saveGuest(g));
 
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())

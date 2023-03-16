@@ -48,6 +48,13 @@ public class GuestController {
         return getEntityModelResponseEntity(g);
     }
 
+    @DeleteMapping("/{id}")
+    public CollectionModel<EntityModel<Guest>> deleteGuest(@PathVariable Long id) {
+        service.deleteGuest(id);
+
+        return assembler.toCollectionModel(service.fetchGuests());
+    }
+
     private ResponseEntity<EntityModel<Guest>> getEntityModelResponseEntity(Guest g) {
         EntityModel<Guest> entityModel = assembler.toModel(service.saveGuest(g));
 

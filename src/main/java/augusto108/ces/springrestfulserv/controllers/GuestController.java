@@ -31,21 +31,24 @@ public class GuestController {
         return assembler.toCollectionModel(service.fetchGuests());
     }
 
-    @PostMapping
-    public ResponseEntity<EntityModel<Guest>> saveGuest(@RequestBody Guest guest) {
-        return getEntityModelResponseEntity(guest);
-    }
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
+    public ResponseEntity<EntityModel<Guest>> saveOrUpdateGuest(@RequestBody Guest guest) {
+        Guest g = null;
+        EntityModel<Guest> entityModel = null;
 
-    @PutMapping
-    public ResponseEntity<EntityModel<Guest>> updateGuest(@RequestBody Guest guest) {
-        Guest g = service.fetchGuest(guest.getId());
+        if (guest.getId() != null) {
+            g = service.fetchGuest(guest.getId());
 
-        g.setName(guest.getName());
-        g.setAddress(guest.getAddress());
-        g.setTelephone(guest.getTelephone());
-        g.setEmail(guest.getEmail());
+            g.setName(guest.getName());
+            g.setAddress(guest.getAddress());
+            g.setTelephone(guest.getTelephone());
+            g.setEmail(guest.getEmail());
 
-        return getEntityModelResponseEntity(g);
+            entityModel = assembler.toModel(service.saveGuest(g));
+        } else entityModel = assembler.toModel(service.saveGuest(guest));
+
+        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
     @DeleteMapping("/{id}")
@@ -53,13 +56,5 @@ public class GuestController {
         service.deleteGuest(id);
 
         return assembler.toCollectionModel(service.fetchGuests());
-    }
-
-    private ResponseEntity<EntityModel<Guest>> getEntityModelResponseEntity(Guest g) {
-        EntityModel<Guest> entityModel = assembler.toModel(service.saveGuest(g));
-
-        return ResponseEntity
-                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(entityModel);
     }
 }

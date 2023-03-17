@@ -52,9 +52,9 @@ public class GuestController {
     }
 
     @DeleteMapping("/{id}")
-    public CollectionModel<EntityModel<Guest>> deleteGuest(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteGuest(@PathVariable Long id) {
         service.deleteGuest(id);
 
-        return assembler.toCollectionModel(service.fetchGuests());
+        return ResponseEntity.noContent().build();
     }
 }

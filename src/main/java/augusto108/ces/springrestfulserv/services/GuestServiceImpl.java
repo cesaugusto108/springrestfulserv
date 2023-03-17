@@ -10,6 +10,8 @@ import java.util.List;
 
 @Service
 public class GuestServiceImpl implements GuestService {
+    private final static String ERROR_MESSAGE = "Guest not found. Id: ";
+
     private final GuestRepository repository;
 
     public GuestServiceImpl(GuestRepository repository) {
@@ -19,7 +21,7 @@ public class GuestServiceImpl implements GuestService {
     @Override
     public Guest fetchGuest(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new GuestNotFoundException("Guest not found. Id: " + id));
+                .orElseThrow(() -> new GuestNotFoundException(ERROR_MESSAGE + id));
     }
 
     @Override
@@ -45,7 +47,7 @@ public class GuestServiceImpl implements GuestService {
         Guest guest = fetchGuest(id);
 
         if (guest == null)
-            throw new GuestNotFoundException("Guest not found. Id: " + id);
+            throw new GuestNotFoundException(ERROR_MESSAGE + id);
         else
             repository.delete(guest);
     }

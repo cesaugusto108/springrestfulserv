@@ -9,6 +9,10 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +35,14 @@ public class GuestController {
     // this will return an aggregate root resource
     @GetMapping
     public CollectionModel<EntityModel<Guest>> fetchAllGuests() {
-        return assembler.toCollectionModel(service.fetchGuests());
+        List<EntityModel<Guest>> guestEntityModels = service.fetchGuests()
+                .stream()
+                .map(guest -> assembler.toModel(guest))
+                .collect(Collectors.toList());
+
+        return CollectionModel.of(
+                guestEntityModels,
+                linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
     }
 
     @RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT })
@@ -51,7 +62,8 @@ public class GuestController {
         } else
             entityModel = assembler.toModel(service.saveGuest(guest));
 
-        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
     }
 

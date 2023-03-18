@@ -6,6 +6,9 @@ import augusto108.ces.springrestfulserv.services.GuestService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.Link;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +34,7 @@ public class GuestController {
         return assembler.toCollectionModel(service.fetchGuests());
     }
 
-    @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT })
     public ResponseEntity<EntityModel<Guest>> saveOrUpdateGuest(@RequestBody Guest guest) {
         Guest g = null;
         EntityModel<Guest> entityModel = null;
@@ -45,16 +48,17 @@ public class GuestController {
             g.setEmail(guest.getEmail());
 
             entityModel = assembler.toModel(service.saveGuest(g));
-        } else entityModel = assembler.toModel(service.saveGuest(guest));
+        } else
+            entityModel = assembler.toModel(service.saveGuest(guest));
 
         return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGuest(@PathVariable Long id) {
+    public EntityModel<Link> deleteGuest(@PathVariable Long id) {
         service.deleteGuest(id);
 
-        return ResponseEntity.noContent().build();
+        return EntityModel.of(linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
     }
 }

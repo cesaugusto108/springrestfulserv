@@ -2,7 +2,7 @@ package augusto108.ces.springrestfulserv.controllers.helpers;
 
 import augusto108.ces.springrestfulserv.controllers.GuestController;
 import augusto108.ces.springrestfulserv.model.Guest;
-import org.springframework.hateoas.CollectionModel;
+import augusto108.ces.springrestfulserv.model.enums.Stay;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -15,15 +15,35 @@ public class GuestModelAssembler
         implements RepresentationModelAssembler<Guest, EntityModel<Guest>> {
     @Override
     public EntityModel<Guest> toModel(Guest guest) {
-        return EntityModel.of(
+        EntityModel<Guest> guestEntityModel = EntityModel.of(
                 guest,
                 linkTo(methodOn(GuestController.class).fetchGuest(guest.getId())).withSelfRel(),
                 linkTo(methodOn(GuestController.class).fetchAllGuests()).withRel("guests")
         );
+
+        confirmReserveStatus(guest, guestEntityModel);
+        confirmCheckInStatus(guest, guestEntityModel);
+
+        return guestEntityModel;
     }
 
-    @Override
-    public CollectionModel<EntityModel<Guest>> toCollectionModel(Iterable<? extends Guest> guests) {
-        return RepresentationModelAssembler.super.toCollectionModel(guests);
+    private static void confirmReserveStatus(Guest guest, EntityModel<Guest> guestEntityModel) {
+        if (guest.getStay() == Stay.RESERVED) {
+            guestEntityModel
+                    .add(linkTo(methodOn(GuestController.class).checkIn(guest.getId()))
+                            .withRel("check-in"));
+            guestEntityModel
+                    .add(linkTo(methodOn(GuestController.class).cancelReserve(guest.getId()))
+                            .withRel("cancel-reserve"));
+
+        }
+    }
+
+    private static void confirmCheckInStatus(Guest guest, EntityModel<Guest> guestEntityModel) {
+        if (guest.getStay() == Stay.CHECKED_IN) {
+            guestEntityModel
+                    .add(linkTo(methodOn(GuestController.class).checkOut(guest.getId()))
+                            .withRel("check-out"));
+        }
     }
 }

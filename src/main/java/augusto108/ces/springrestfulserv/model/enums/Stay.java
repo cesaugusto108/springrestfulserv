@@ -1,5 +1,5 @@
 package augusto108.ces.springrestfulserv.model.enums;
 
 public enum Stay {
-    RESERVE, CHECKIN, CHECKOUT
+    RESERVED, CHECKED_IN, CHECKED_OUT, CANCELLED
 }

@@ -12,4 +12,10 @@ public interface GuestService {
     Guest saveGuest(Guest guest);
 
     void deleteGuest(Long id);
+
+    Guest checkIn(Guest guest);
+
+    Guest checkOut(Guest guest);
+
+    Guest cancelReserve(Guest guest);
 }

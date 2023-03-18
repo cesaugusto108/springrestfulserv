@@ -2,6 +2,7 @@ package augusto108.ces.springrestfulserv.services;
 
 import augusto108.ces.springrestfulserv.exceptions.GuestNotFoundException;
 import augusto108.ces.springrestfulserv.model.Guest;
+import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.repositories.GuestRepository;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +51,26 @@ public class GuestServiceImpl implements GuestService {
             throw new GuestNotFoundException(ERROR_MESSAGE + id);
         else
             repository.delete(guest);
+    }
+
+    @Override
+    public Guest checkIn(Guest guest) {
+        guest.setStay(Stay.CHECKED_IN);
+
+        return repository.save(guest);
+    }
+
+    @Override
+    public Guest checkOut(Guest guest) {
+        guest.setStay(Stay.CHECKED_OUT);
+
+        return repository.save(guest);
+    }
+
+    @Override
+    public Guest cancelReserve(Guest guest) {
+        guest.setStay(Stay.CANCELLED);
+
+        return repository.save(guest);
     }
 }

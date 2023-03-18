@@ -29,7 +29,7 @@ public class GuestDataBaseLoad {
                 new Address("Av. Augusto Franco", 142, "Aracaju"),
                 new Telephone("79999999999"),
                 "marcela@email.com",
-                Stay.RESERVE
+                Stay.RESERVED
         );
 
         Guest g2 = new Guest(
@@ -37,7 +37,7 @@ public class GuestDataBaseLoad {
                 new Address("Rua Boquim", 552, "Aracaju"),
                 new Telephone("79998989898"),
                 "joaocarlos@email.com",
-                Stay.CHECKIN
+                Stay.CHECKED_IN
         );
 
         return args -> {

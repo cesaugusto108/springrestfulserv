@@ -2,19 +2,20 @@ package augusto108.ces.springrestfulserv.controllers;
 
 import augusto108.ces.springrestfulserv.controllers.helpers.GuestModelAssembler;
 import augusto108.ces.springrestfulserv.model.Guest;
+import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/guests")
@@ -45,7 +46,7 @@ public class GuestController {
                 linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
     }
 
-    @RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT })
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
     public ResponseEntity<EntityModel<Guest>> saveOrUpdateGuest(@RequestBody Guest guest) {
         Guest g = null;
         EntityModel<Guest> entityModel = null;
@@ -57,10 +58,14 @@ public class GuestController {
             g.setAddress(guest.getAddress());
             g.setTelephone(guest.getTelephone());
             g.setEmail(guest.getEmail());
+            g.setStay(guest.getStay());
 
             entityModel = assembler.toModel(service.saveGuest(g));
-        } else
+        } else {
+            guest.setStay(Stay.RESERVE);
+
             entityModel = assembler.toModel(service.saveGuest(guest));
+        }
 
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
@@ -71,6 +76,7 @@ public class GuestController {
     public EntityModel<Link> deleteGuest(@PathVariable Long id) {
         service.deleteGuest(id);
 
-        return EntityModel.of(linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
+        return EntityModel
+                .of(linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
     }
 }

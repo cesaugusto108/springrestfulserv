@@ -4,6 +4,7 @@ import augusto108.ces.springrestfulserv.model.Address;
 import augusto108.ces.springrestfulserv.model.Guest;
 import augusto108.ces.springrestfulserv.model.Name;
 import augusto108.ces.springrestfulserv.model.Telephone;
+import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -27,14 +28,16 @@ public class GuestDataBaseLoad {
                 new Name("Marcela", "Carvalho"),
                 new Address("Av. Augusto Franco", 142, "Aracaju"),
                 new Telephone("79999999999"),
-                "marcela@email.com"
+                "marcela@email.com",
+                Stay.RESERVE
         );
 
         Guest g2 = new Guest(
                 new Name("João Carlos", "Souza"),
                 new Address("Rua Boquim", 552, "Aracaju"),
                 new Telephone("79998989898"),
-                "joaocarlos@email.com"
+                "joaocarlos@email.com",
+                Stay.CHECKIN
         );
 
         return args -> {

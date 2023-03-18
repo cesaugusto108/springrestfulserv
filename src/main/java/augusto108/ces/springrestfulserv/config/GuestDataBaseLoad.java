@@ -1,9 +1,6 @@
 package augusto108.ces.springrestfulserv.config;
 
-import augusto108.ces.springrestfulserv.model.Address;
-import augusto108.ces.springrestfulserv.model.Guest;
-import augusto108.ces.springrestfulserv.model.Name;
-import augusto108.ces.springrestfulserv.model.Telephone;
+import augusto108.ces.springrestfulserv.model.*;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
 import org.springframework.boot.CommandLineRunner;
@@ -29,6 +26,7 @@ public class GuestDataBaseLoad {
                 new Address("Av. Augusto Franco", 142, "Aracaju"),
                 new Telephone("79999999999"),
                 "marcela@email.com",
+                new EmailAddress("marcela", "@email.com"),
                 Stay.RESERVED
         );
 
@@ -37,6 +35,7 @@ public class GuestDataBaseLoad {
                 new Address("Rua Boquim", 552, "Aracaju"),
                 new Telephone("79998989898"),
                 "joaocarlos@email.com",
+                new EmailAddress("joaocarlos", "email.com"),
                 Stay.CHECKED_IN
         );
 

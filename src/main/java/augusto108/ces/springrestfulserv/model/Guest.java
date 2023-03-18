@@ -23,17 +23,28 @@ public class Guest extends BaseEntity {
     @Column(name = "guest_email")
     private String email;
 
+    @Embedded
+    private EmailAddress emailAddress;
+
     @Enumerated
     private Stay stay;
 
     public Guest() {
     }
 
-    public Guest(Name name, Address address, Telephone telephone, String email, Stay stay) {
+    public Guest(
+            Name name,
+            Address address,
+            Telephone telephone,
+            String email,
+            EmailAddress emailAddress,
+            Stay stay
+    ) {
         this.name = name;
         this.address = address;
         this.telephone = telephone;
         this.email = email;
+        this.emailAddress = emailAddress;
         this.stay = stay;
     }
 
@@ -69,6 +80,14 @@ public class Guest extends BaseEntity {
         this.email = email;
     }
 
+    public EmailAddress getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(EmailAddress emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     public Stay getStay() {
         return stay;
     }
@@ -88,7 +107,9 @@ public class Guest extends BaseEntity {
                 telephone +
                 ", " +
                 email +
-                "] Stay status: " +
+                " (" +
+                emailAddress +
+                ")] Stay status: " +
                 stay;
     }
 }

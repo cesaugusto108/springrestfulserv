@@ -130,6 +130,7 @@ public class GuestController {
             g.setAddress(guest.getAddress());
             g.setTelephone(guest.getTelephone());
             g.setEmail(guest.getEmail());
+            g.setEmailAddress(guest.getEmailAddress());
             g.setStay(guest.getStay());
 
             entityModel = assembler.toModel(service.saveGuest(g)); // update guest

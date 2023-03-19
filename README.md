@@ -11,21 +11,21 @@ $ : curl -v localhost:8080/guests | json_pp
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying ::1:8080...
-* Connected to localhost (::1) port 8080 (#0)
-> GET /guests HTTP/1.1
-> Host: localhost:8080
-> User-Agent: curl/7.74.0
-> Accept: */*
-> 
-* Mark bundle as not supporting multiuse
-< HTTP/1.1 200 
-< Content-Type: application/hal+json
-< Transfer-Encoding: chunked
-< Date: Sun, 19 Mar 2023 00:24:56 GMT
-< 
+ Connected to localhost (::1) port 8080 (#0)
+GET /guests HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/7.74.0
+Accept: */*
+
+ Mark bundle as not supporting multiuse
+HTTP/1.1 200 
+Content-Type: application/hal+json
+Transfer-Encoding: chunked
+Date: Sun, 19 Mar 2023 00:24:56 GMT
+ 
 { [1074 bytes data]
 100  1067    0  1067    0     0   2376      0 --:--:-- --:--:-- --:--:--  2376
-* Connection #0 to host localhost left intact
+ Connection #0 to host localhost left intact
 {
     "_embedded": {
         "guestList": [

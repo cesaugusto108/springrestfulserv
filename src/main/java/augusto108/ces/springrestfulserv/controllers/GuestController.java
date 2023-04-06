@@ -2,6 +2,7 @@ package augusto108.ces.springrestfulserv.controllers;
 
 import augusto108.ces.springrestfulserv.controllers.helpers.GuestModelAssembler;
 import augusto108.ces.springrestfulserv.model.Guest;
+import augusto108.ces.springrestfulserv.model.Name;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
 import org.springframework.hateoas.*;
@@ -50,6 +51,34 @@ public class GuestController {
         return CollectionModel.of(
                 guestEntityModels,
                 linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
+    }
+
+    @GetMapping("/name-search")
+    public CollectionModel<EntityModel<Guest>> findGuestByName(
+            @RequestParam(defaultValue = "") String firstName, @RequestParam(defaultValue = "") String lastName
+    ) {
+        List<EntityModel<Guest>> guestEntityModels = service.findByName(new Name(firstName, lastName))
+                .stream()
+                .map(guest -> assembler.toModel(guest))
+                .collect(Collectors.toList());
+
+        return CollectionModel.of(
+                guestEntityModels,
+                linkTo(methodOn(GuestController.class).findGuestByName(firstName, lastName)).withSelfRel()
+        );
+    }
+
+    @GetMapping("/search")
+    public CollectionModel<EntityModel<Guest>> searchGuests(@RequestParam(defaultValue = "") String search) {
+        List<EntityModel<Guest>> guestEntityModels = service.searchGuests(search)
+                .stream()
+                .map(guest -> assembler.toModel(guest))
+                .collect(Collectors.toList());
+
+        return CollectionModel.of(
+                guestEntityModels,
+                linkTo(methodOn(GuestController.class).searchGuests(search)).withSelfRel()
+        );
     }
 
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})

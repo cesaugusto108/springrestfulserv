@@ -31,6 +31,7 @@ public class GuestController {
         this.assembler = assembler;
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     public EntityModel<Guest> fetchGuest(@PathVariable Long id) {
         try {
@@ -40,7 +41,7 @@ public class GuestController {
         }
     }
 
-    // this will return an aggregate root resource
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public CollectionModel<EntityModel<Guest>> fetchAllGuests() {
         List<EntityModel<Guest>> guestEntityModels = service.fetchGuests()
@@ -53,6 +54,7 @@ public class GuestController {
                 linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/name-search")
     public CollectionModel<EntityModel<Guest>> findGuestByName(
             @RequestParam(defaultValue = "") String firstName, @RequestParam(defaultValue = "") String lastName
@@ -68,6 +70,7 @@ public class GuestController {
         );
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/search")
     public CollectionModel<EntityModel<Guest>> searchGuests(@RequestParam(defaultValue = "") String search) {
         List<EntityModel<Guest>> guestEntityModels = service.searchGuests(search)
@@ -90,6 +93,7 @@ public class GuestController {
                 .body(entityModel);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public EntityModel<Link> deleteGuest(@PathVariable Long id) {
         service.deleteGuest(id);

@@ -22,7 +22,7 @@ public class Guest extends BaseEntity {
     @Embedded
     private EmailAddress emailAddress;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Stay stay;
 
     public Guest() {

@@ -1,8 +1,8 @@
 package augusto108.ces.springrestfulserv.services;
 
-import java.util.List;
-
 import augusto108.ces.springrestfulserv.model.Guest;
+
+import java.util.List;
 
 public interface GuestService {
     Guest fetchGuest(Long id);

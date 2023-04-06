@@ -1,12 +1,8 @@
 package augusto108.ces.springrestfulserv.model;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
-
 import augusto108.ces.springrestfulserv.model.enums.Stay;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "tb_guest")

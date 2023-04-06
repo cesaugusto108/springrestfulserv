@@ -5,7 +5,8 @@ Actions GET, POST, PUT, PATCH, DELETE retrieves, saves, updates and deletes (CRU
 
 Example usage of the API:
 
-Action GET through HTTP path /guests/1 (JSON result will bring hyperlinks that signal valid actions according to resource state):
+Action GET through HTTP path /guests/1 (JSON result will bring hyperlinks that signal valid actions according to
+resource state):
 
 $ : curl -v localhost:8080/guests/1 | json_pp
 
@@ -15,7 +16,7 @@ Host: localhost:8080
 
 User-Agent: curl/7.74.0
 
-HTTP/1.1 200 
+HTTP/1.1 200
 
 Content-Type: application/hal+json
 

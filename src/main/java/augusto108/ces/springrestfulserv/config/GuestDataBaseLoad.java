@@ -40,8 +40,8 @@ public class GuestDataBaseLoad {
         );
 
         return args -> {
-              LOGGER.info("-> -> Database load: " + service.saveGuest(g1));
-              LOGGER.info("-> -> Database load: " + service.saveGuest(g2));
+            LOGGER.info("-> -> Database load: " + service.saveGuest(g1));
+            LOGGER.info("-> -> Database load: " + service.saveGuest(g2));
         };
     }
 }

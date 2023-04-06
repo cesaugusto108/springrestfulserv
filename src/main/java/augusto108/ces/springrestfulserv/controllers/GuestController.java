@@ -32,7 +32,11 @@ public class GuestController {
 
     @GetMapping("/{id}")
     public EntityModel<Guest> fetchGuest(@PathVariable Long id) {
-        return assembler.toModel(service.fetchGuest(id));
+        try {
+            return assembler.toModel(service.fetchGuest(id));
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException(e.getMessage());
+        }
     }
 
     // this will return an aggregate root resource

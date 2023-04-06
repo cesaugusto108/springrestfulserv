@@ -11,19 +11,32 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
 
 @ControllerAdvice
-public class GuestNotFoundHandler {
-    @ExceptionHandler
+public class ApplicationExceptionHandler {
+    @ExceptionHandler({GuestNotFoundException.class, NoHandlerFoundException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Problem> handleException(GuestNotFoundException e) {
+    public ResponseEntity<Problem> handleNotFound(Exception e) {
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND, e.getMessage(), e.toString());
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .body(Problem.create(response));
+    }
+
+    @ExceptionHandler(NumberFormatException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Problem> handleBadRequest(NumberFormatException e) {
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), e.toString());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .body(Problem.create(response));
     }

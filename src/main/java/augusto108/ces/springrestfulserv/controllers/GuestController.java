@@ -51,7 +51,10 @@ public class GuestController {
 
         return CollectionModel.of(
                 guestEntityModels,
-                linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
+                linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel(),
+                linkTo(methodOn(GuestController.class).searchGuests("")).withRel("search"),
+                linkTo(methodOn(GuestController.class).findGuestByName(" ", " ")).withRel("name-search")
+        );
     }
 
     @ResponseStatus(HttpStatus.OK)

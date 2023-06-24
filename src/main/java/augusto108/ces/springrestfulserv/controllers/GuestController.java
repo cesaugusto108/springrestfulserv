@@ -109,7 +109,7 @@ public class GuestController {
     public ResponseEntity<?> checkIn(@PathVariable Long id) {
         Guest guest = service.fetchGuest(id);
 
-        Problem problem = Problem.create()
+        final Problem problem = Problem.create()
                 .withTitle(METHOD_NOT_ALLOWED)
                 .withDetail("Cannot check in guest with stay status " + guest.getStay());
 
@@ -127,7 +127,7 @@ public class GuestController {
     public ResponseEntity<?> checkOut(@PathVariable Long id) {
         Guest guest = service.fetchGuest(id);
 
-        Problem problem = Problem.create()
+        final Problem problem = Problem.create()
                 .withTitle(METHOD_NOT_ALLOWED)
                 .withDetail("Cannot check out guest with stay status " + guest.getStay());
 
@@ -144,7 +144,7 @@ public class GuestController {
     public ResponseEntity<?> cancelReserve(@PathVariable Long id) {
         Guest guest = service.fetchGuest(id);
 
-        Problem problem = Problem.create()
+        final Problem problem = Problem.create()
                 .withTitle(METHOD_NOT_ALLOWED)
                 .withDetail(
                         "Cannot cancel a reserve of a guest with stay status " + guest.getStay()

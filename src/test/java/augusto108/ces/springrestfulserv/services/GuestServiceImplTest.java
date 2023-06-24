@@ -1,29 +1,19 @@
 package augusto108.ces.springrestfulserv.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Test;
+import augusto108.ces.springrestfulserv.model.*;
+import augusto108.ces.springrestfulserv.model.enums.Stay;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import augusto108.ces.springrestfulserv.model.Address;
-import augusto108.ces.springrestfulserv.model.EmailAddress;
-import augusto108.ces.springrestfulserv.model.Guest;
-import augusto108.ces.springrestfulserv.model.Name;
-import augusto108.ces.springrestfulserv.model.Telephone;
-import augusto108.ces.springrestfulserv.model.enums.Stay;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -41,9 +31,11 @@ public class GuestServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        jdbcTemplate.execute("insert into `tb_guest` (`id`, `guest_address_city`, `guest_address_number`, `guest_address_street`, " +
-        "`guest_email`, `guest_email_domain_name`, `guest_email_username`, `first_name`, `last_name`, `stay`, `guest_telephone`) " +
-        "values (1000, 'Aracaju', 321, 'Rua Porto da Folha', 'katia@email.com', '@email.com', 'katia', 'Kátia', 'Moura', 'RESERVED', '79988712340');");
+        final String query = "insert into `tb_guest` (`id`, `guest_address_city`, `guest_address_number`, `guest_address_street`, " +
+                "`guest_email`, `guest_email_domain_name`, `guest_email_username`, `first_name`, `last_name`, `stay`, `guest_telephone`) " +
+                "values (1000, 'Aracaju', 321, 'Rua Porto da Folha', 'katia@email.com', '@email.com', 'katia', 'Kátia', 'Moura', 'RESERVED', '79988712340');";
+
+        jdbcTemplate.execute(query);
     }
 
     @AfterEach

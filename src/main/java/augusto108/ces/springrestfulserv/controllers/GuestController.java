@@ -9,6 +9,7 @@ import org.springframework.hateoas.*;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +33,7 @@ public class GuestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public EntityModel<Guest> fetchGuest(@PathVariable Long id) {
         try {
             return assembler.toModel(service.fetchGuest(id));
@@ -42,7 +43,7 @@ public class GuestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping
+    @GetMapping(produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public CollectionModel<EntityModel<Guest>> fetchAllGuests() {
         List<EntityModel<Guest>> guestEntityModels = service.fetchGuests()
                 .stream()
@@ -58,7 +59,7 @@ public class GuestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/name-search")
+    @GetMapping(value = "/name-search", produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public CollectionModel<EntityModel<Guest>> findGuestByName(
             @RequestParam(defaultValue = "") String firstName, @RequestParam(defaultValue = "") String lastName
     ) {
@@ -74,7 +75,7 @@ public class GuestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/search")
+    @GetMapping(value = "/search", produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public CollectionModel<EntityModel<Guest>> searchGuests(@RequestParam(defaultValue = "") String search) {
         List<EntityModel<Guest>> guestEntityModels = service.searchGuests(search)
                 .stream()
@@ -87,7 +88,9 @@ public class GuestController {
         );
     }
 
-    @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT})
+    @RequestMapping(
+            method = {RequestMethod.POST, RequestMethod.PUT},
+            produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<EntityModel<Guest>> saveOrUpdateGuest(@RequestBody Guest guest) {
         EntityModel<Guest> entityModel = getGuestEntityModelSaveOrUpdate(guest);
 
@@ -97,7 +100,7 @@ public class GuestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/{id}", produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public EntityModel<Link> deleteGuest(@PathVariable Long id) {
         service.deleteGuest(id);
 
@@ -105,7 +108,9 @@ public class GuestController {
                 .of(linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
     }
 
-    @PatchMapping("/{id}/check-in")
+    @PatchMapping(
+            value = "/{id}/check-in",
+            produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> checkIn(@PathVariable Long id) {
         Guest guest = service.fetchGuest(id);
 
@@ -123,7 +128,9 @@ public class GuestController {
                 .body(problem);
     }
 
-    @PatchMapping("/{id}/check-out")
+    @PatchMapping(
+            value = "/{id}/check-out",
+            produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> checkOut(@PathVariable Long id) {
         Guest guest = service.fetchGuest(id);
 
@@ -140,7 +147,9 @@ public class GuestController {
                 .body(problem);
     }
 
-    @PatchMapping("/{id}/cancel")
+    @PatchMapping(
+            value = "/{id}/cancel",
+            produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> cancelReserve(@PathVariable Long id) {
         Guest guest = service.fetchGuest(id);
 

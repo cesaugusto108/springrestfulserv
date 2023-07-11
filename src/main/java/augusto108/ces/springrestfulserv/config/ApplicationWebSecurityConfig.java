@@ -66,6 +66,6 @@ public class ApplicationWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-                http.headers().frameOptions().disable();
+        http.headers().frameOptions().disable();
     }
 }

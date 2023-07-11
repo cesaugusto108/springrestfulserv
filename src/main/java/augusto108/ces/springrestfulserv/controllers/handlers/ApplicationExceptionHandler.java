@@ -6,7 +6,9 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +19,23 @@ import java.time.LocalDateTime;
 
 @ControllerAdvice
 public class ApplicationExceptionHandler {
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public ResponseEntity<Problem> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException e) {
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.NOT_ACCEPTABLE,
+                e.getMessage() +
+                        ". Acceptable formats: " + MediaType.APPLICATION_XML_VALUE +
+                        " and " + MediaTypes.HAL_JSON_VALUE,
+                e.toString());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .body(Problem.create(response));
+    }
+
     @ExceptionHandler({GuestNotFoundException.class, NoHandlerFoundException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)

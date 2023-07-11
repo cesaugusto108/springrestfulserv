@@ -79,12 +79,19 @@ class GuestControllerTest {
 
     @Test
     void fetchGuest() throws Exception {
-        mockMvc.perform(get("/guests/{id}", 1000))
+        mockMvc.perform(get("/guests/{id}?format=json", 1000))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/hal+json"))
                 .andExpect(jsonPath("$.id", is(1000)))
                 .andExpect(jsonPath("$.stay", is("RESERVED")))
                 .andExpect(jsonPath("$.email", is("katia@email.com")));
+
+        mockMvc.perform(get("/guests/{id}?format=xml", 1000))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/xml"))
+                .andExpect(xpath("EntityModel/id").string("1000"))
+                .andExpect(xpath("EntityModel/stay").string("RESERVED"))
+                .andExpect(xpath("EntityModel/email").string("katia@email.com"));
 
         mockMvc.perform(get("/guests/{id}", 0))
                 .andExpect(status().isNotFound())
@@ -109,18 +116,35 @@ class GuestControllerTest {
 
     @Test
     void fetchAllGuests() throws Exception {
-        mockMvc.perform(get("/guests"))
+        mockMvc.perform(get("/guests?format=json"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/hal+json"))
                 .andExpect(jsonPath("$._embedded.guestList", hasSize(4)))
                 .andExpect(jsonPath("$._embedded.guestList[0].id", is(1000)))
                 .andExpect(jsonPath("$._embedded.guestList[0].stay", is("RESERVED")))
                 .andExpect(jsonPath("$._embedded.guestList[0].email", is("katia@email.com")));
+
+        mockMvc.perform(get("/guests?format=xml"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/xml"))
+                .andExpect(xpath("CollectionModel/links/rel").string("self"))
+                .andExpect(xpath("CollectionModel/content/content/id").string("1000"))
+                .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"));
+
+        mockMvc.perform(get("/guests?format=yml"))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType("application/problem+json"))
+                .andExpect(jsonPath("$.status", is("NOT_ACCEPTABLE")))
+                .andExpect(jsonPath("$.statusCode", is(406)))
+                .andExpect(jsonPath("$.message",
+                        is("Could not find acceptable representation. Acceptable formats: application/xml and application/hal+json")))
+                .andExpect(jsonPath("$.error",
+                        is("org.springframework.web.HttpMediaTypeNotAcceptableException: Could not find acceptable representation")));
     }
 
     @Test
     void findGuestByName() throws Exception {
-        mockMvc.perform(get("/guests/name-search")
+        mockMvc.perform(get("/guests/name-search?format=json")
                         .param("firstName", "kátia")
                         .param("lastName", "moura"))
                 .andExpect(status().isOk())
@@ -129,17 +153,37 @@ class GuestControllerTest {
                 .andExpect(jsonPath("$._embedded.guestList[0].name.firstName", is("Kátia")))
                 .andExpect(jsonPath("$._embedded.guestList[0].stay", is("RESERVED")))
                 .andExpect(jsonPath("$._embedded.guestList[0].email", is("katia@email.com")));
+
+        mockMvc.perform(get("/guests/name-search?format=xml")
+                        .param("firstName", "kátia")
+                        .param("lastName", "moura"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/xml"))
+                .andExpect(xpath("CollectionModel/links/rel").string("self"))
+                .andExpect(xpath("CollectionModel/content/content/id").string("1000"))
+                .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"))
+                .andExpect(xpath("CollectionModel/content/content/stay").string("RESERVED"))
+                .andExpect(xpath("CollectionModel/content/content/email").string("katia@email.com"));
     }
 
     @Test
     void searchGuests() throws Exception {
-        mockMvc.perform(get("/guests/search").param("search", "RESERVED"))
+        mockMvc.perform(get("/guests/search?format=json").param("search", "RESERVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/hal+json"))
                 .andExpect(jsonPath("$._embedded.guestList[0].id", is(1000)))
                 .andExpect(jsonPath("$._embedded.guestList[0].name.firstName", is("Kátia")))
                 .andExpect(jsonPath("$._embedded.guestList[0].stay", is("RESERVED")))
                 .andExpect(jsonPath("$._embedded.guestList[0].email", is("katia@email.com")));
+
+        mockMvc.perform(get("/guests/search?format=xml").param("search", "RESERVED"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/xml"))
+                .andExpect(xpath("CollectionModel/links/rel").string("self"))
+                .andExpect(xpath("CollectionModel/content/content/id").string("1000"))
+                .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"))
+                .andExpect(xpath("CollectionModel/content/content/stay").string("RESERVED"))
+                .andExpect(xpath("CollectionModel/content/content/email").string("katia@email.com"));
     }
 
     @Test

@@ -5,7 +5,9 @@ import augusto108.ces.springrestfulserv.model.Guest;
 import augusto108.ces.springrestfulserv.model.Name;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.*;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +36,7 @@ public class GuestController {
         this.assembler = assembler;
     }
 
+    @Operation(summary = "fetch guest by id")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public EntityModel<Guest> fetchGuest(@PathVariable Long id) {
@@ -44,6 +47,7 @@ public class GuestController {
         }
     }
 
+    @Operation(summary = "fetch all guests")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public CollectionModel<EntityModel<Guest>> fetchAllGuests() {
@@ -60,6 +64,7 @@ public class GuestController {
         );
     }
 
+    @Operation(summary = "find guest by name")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/name-search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public CollectionModel<EntityModel<Guest>> findGuestByName(
@@ -76,6 +81,7 @@ public class GuestController {
         );
     }
 
+    @Operation(summary = "search guests")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public CollectionModel<EntityModel<Guest>> searchGuests(@RequestParam(defaultValue = "") String search) {
@@ -90,6 +96,7 @@ public class GuestController {
         );
     }
 
+    @Operation(summary = "save or update guest")
     @RequestMapping(
             method = {RequestMethod.POST, RequestMethod.PUT},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -101,6 +108,7 @@ public class GuestController {
                 .body(entityModel);
     }
 
+    @Operation(summary = "delete guest")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public EntityModel<Link> deleteGuest(@PathVariable Long id) {
@@ -109,6 +117,7 @@ public class GuestController {
         return EntityModel.of(linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
     }
 
+    @Operation(summary = "guest check in")
     @PatchMapping(
             value = "/{id}/check-in",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -127,6 +136,7 @@ public class GuestController {
                 .body(problem);
     }
 
+    @Operation(summary = "guest check out")
     @PatchMapping(
             value = "/{id}/check-out",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -145,6 +155,7 @@ public class GuestController {
                 .body(problem);
     }
 
+    @Operation(summary = "cancel guest's reserve")
     @PatchMapping(
             value = "/{id}/cancel",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -170,12 +181,7 @@ public class GuestController {
         if (guest.getId() != null) {
             g = service.fetchGuest(guest.getId());
 
-            g.setName(guest.getName());
-            g.setAddress(guest.getAddress());
-            g.setTelephone(guest.getTelephone());
-            g.setEmail(guest.getEmail());
-            g.setEmailAddress(guest.getEmailAddress());
-            g.setStay(guest.getStay());
+            BeanUtils.copyProperties(guest, g);
 
             entityModel = assembler.toModel(service.saveGuest(g)); // update guest
         } else {

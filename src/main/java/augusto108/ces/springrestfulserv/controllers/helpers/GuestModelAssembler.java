@@ -11,8 +11,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class GuestModelAssembler
-        implements RepresentationModelAssembler<Guest, EntityModel<Guest>> {
+public class GuestModelAssembler implements RepresentationModelAssembler<Guest, EntityModel<Guest>> {
     @Override
     public EntityModel<Guest> toModel(Guest guest) {
         EntityModel<Guest> guestEntityModel = EntityModel.of(

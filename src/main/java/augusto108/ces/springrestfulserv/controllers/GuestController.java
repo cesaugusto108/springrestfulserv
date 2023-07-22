@@ -5,6 +5,7 @@ import augusto108.ces.springrestfulserv.model.Guest;
 import augusto108.ces.springrestfulserv.model.Name;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.hateoas.*;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
@@ -19,8 +20,9 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+@Tag(name = "Guest Tracker", description = "manages information about hotel guests")
 @RestController
-@RequestMapping("/guests")
+@RequestMapping("/v1/guests")
 public class GuestController {
     private final static String METHOD_NOT_ALLOWED = "405 Method not allowed";
 
@@ -33,7 +35,7 @@ public class GuestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/{id}", produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public EntityModel<Guest> fetchGuest(@PathVariable Long id) {
         try {
             return assembler.toModel(service.fetchGuest(id));
@@ -43,9 +45,9 @@ public class GuestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public CollectionModel<EntityModel<Guest>> fetchAllGuests() {
-        List<EntityModel<Guest>> guestEntityModels = service.fetchGuests()
+        final List<EntityModel<Guest>> guestEntityModels = service.fetchGuests()
                 .stream()
                 .map(guest -> assembler.toModel(guest))
                 .collect(Collectors.toList());
@@ -59,11 +61,11 @@ public class GuestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/name-search", produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/name-search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public CollectionModel<EntityModel<Guest>> findGuestByName(
             @RequestParam(defaultValue = "") String firstName, @RequestParam(defaultValue = "") String lastName
     ) {
-        List<EntityModel<Guest>> guestEntityModels = service.findByName(new Name(firstName, lastName))
+        final List<EntityModel<Guest>> guestEntityModels = service.findByName(new Name(firstName, lastName))
                 .stream()
                 .map(guest -> assembler.toModel(guest))
                 .collect(Collectors.toList());
@@ -75,9 +77,9 @@ public class GuestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = "/search", produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public CollectionModel<EntityModel<Guest>> searchGuests(@RequestParam(defaultValue = "") String search) {
-        List<EntityModel<Guest>> guestEntityModels = service.searchGuests(search)
+        final List<EntityModel<Guest>> guestEntityModels = service.searchGuests(search)
                 .stream()
                 .map(guest -> assembler.toModel(guest))
                 .collect(Collectors.toList());
@@ -90,9 +92,9 @@ public class GuestController {
 
     @RequestMapping(
             method = {RequestMethod.POST, RequestMethod.PUT},
-            produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<EntityModel<Guest>> saveOrUpdateGuest(@RequestBody Guest guest) {
-        EntityModel<Guest> entityModel = getGuestEntityModelSaveOrUpdate(guest);
+        final EntityModel<Guest> entityModel = getSaveOrUpdateGuestEntityModel(guest);
 
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
@@ -100,27 +102,24 @@ public class GuestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping(value = "/{id}", produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @DeleteMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public EntityModel<Link> deleteGuest(@PathVariable Long id) {
         service.deleteGuest(id);
 
-        return EntityModel
-                .of(linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
+        return EntityModel.of(linkTo(methodOn(GuestController.class).fetchAllGuests()).withSelfRel());
     }
 
     @PatchMapping(
             value = "/{id}/check-in",
-            produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> checkIn(@PathVariable Long id) {
-        Guest guest = service.fetchGuest(id);
+        final Guest guest = service.fetchGuest(id);
 
         final Problem problem = Problem.create()
                 .withTitle(METHOD_NOT_ALLOWED)
                 .withDetail("Cannot check in guest with stay status " + guest.getStay());
 
-        if (guest.getStay() == Stay.RESERVED)
-            return ResponseEntity.ok(assembler.toModel(service.checkIn(guest)));
-
+        if (guest.getStay() == Stay.RESERVED) return ResponseEntity.ok(assembler.toModel(service.checkIn(guest)));
 
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
@@ -130,16 +129,15 @@ public class GuestController {
 
     @PatchMapping(
             value = "/{id}/check-out",
-            produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> checkOut(@PathVariable Long id) {
-        Guest guest = service.fetchGuest(id);
+        final Guest guest = service.fetchGuest(id);
 
         final Problem problem = Problem.create()
                 .withTitle(METHOD_NOT_ALLOWED)
                 .withDetail("Cannot check out guest with stay status " + guest.getStay());
 
-        if (guest.getStay() == Stay.CHECKED_IN)
-            return ResponseEntity.ok(assembler.toModel(service.checkOut(guest)));
+        if (guest.getStay() == Stay.CHECKED_IN) return ResponseEntity.ok(assembler.toModel(service.checkOut(guest)));
 
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
@@ -149,18 +147,15 @@ public class GuestController {
 
     @PatchMapping(
             value = "/{id}/cancel",
-            produces = {MediaTypes.HAL_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> cancelReserve(@PathVariable Long id) {
-        Guest guest = service.fetchGuest(id);
+        final Guest guest = service.fetchGuest(id);
 
         final Problem problem = Problem.create()
                 .withTitle(METHOD_NOT_ALLOWED)
-                .withDetail(
-                        "Cannot cancel a reserve of a guest with stay status " + guest.getStay()
-                );
+                .withDetail("Cannot cancel a reserve of a guest with stay status " + guest.getStay());
 
-        if (guest.getStay() == Stay.RESERVED)
-            return ResponseEntity.ok(assembler.toModel(service.cancelReserve(guest)));
+        if (guest.getStay() == Stay.RESERVED) return ResponseEntity.ok(assembler.toModel(service.cancelReserve(guest)));
 
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
@@ -168,9 +163,9 @@ public class GuestController {
                 .body(problem);
     }
 
-    private EntityModel<Guest> getGuestEntityModelSaveOrUpdate(Guest guest) {
-        EntityModel<Guest> entityModel;
-        Guest g;
+    private EntityModel<Guest> getSaveOrUpdateGuestEntityModel(Guest guest) {
+        final EntityModel<Guest> entityModel;
+        final Guest g;
 
         if (guest.getId() != null) {
             g = service.fetchGuest(guest.getId());

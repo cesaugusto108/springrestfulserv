@@ -79,21 +79,21 @@ class GuestControllerTest {
 
     @Test
     void fetchGuest() throws Exception {
-        mockMvc.perform(get("/guests/{id}?format=json", 1000))
+        mockMvc.perform(get("/v1/guests/{id}?format=json", 1000))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/hal+json"))
+                .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.id", is(1000)))
                 .andExpect(jsonPath("$.stay", is("RESERVED")))
                 .andExpect(jsonPath("$.email", is("katia@email.com")));
 
-        mockMvc.perform(get("/guests/{id}?format=xml", 1000))
+        mockMvc.perform(get("/v1/guests/{id}?format=xml", 1000))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
                 .andExpect(xpath("EntityModel/id").string("1000"))
                 .andExpect(xpath("EntityModel/stay").string("RESERVED"))
                 .andExpect(xpath("EntityModel/email").string("katia@email.com"));
 
-        mockMvc.perform(get("/guests/{id}", 0))
+        mockMvc.perform(get("/v1/guests/{id}", 0))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/problem+json"))
                 .andExpect(jsonPath("$.status", is("NOT_FOUND")))
@@ -102,7 +102,7 @@ class GuestControllerTest {
                 .andExpect(jsonPath("$.error",
                         is("augusto108.ces.springrestfulserv.exceptions.GuestNotFoundException: Guest not found. Id: 0")));
 
-        mockMvc.perform(get("/guests/{id}", "aaa"))
+        mockMvc.perform(get("/v1/guests/{id}", "aaa"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/problem+json"))
                 .andExpect(jsonPath("$.status", is("BAD_REQUEST")))
@@ -116,45 +116,45 @@ class GuestControllerTest {
 
     @Test
     void fetchAllGuests() throws Exception {
-        mockMvc.perform(get("/guests?format=json"))
+        mockMvc.perform(get("/v1/guests?format=json"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/hal+json"))
+                .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$._embedded.guestList", hasSize(4)))
                 .andExpect(jsonPath("$._embedded.guestList[0].id", is(1000)))
                 .andExpect(jsonPath("$._embedded.guestList[0].stay", is("RESERVED")))
                 .andExpect(jsonPath("$._embedded.guestList[0].email", is("katia@email.com")));
 
-        mockMvc.perform(get("/guests?format=xml"))
+        mockMvc.perform(get("/v1/guests?format=xml"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
                 .andExpect(xpath("CollectionModel/links/rel").string("self"))
                 .andExpect(xpath("CollectionModel/content/content/id").string("1000"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"));
 
-        mockMvc.perform(get("/guests?format=yml"))
+        mockMvc.perform(get("/v1/guests?format=yml"))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType("application/problem+json"))
                 .andExpect(jsonPath("$.status", is("NOT_ACCEPTABLE")))
                 .andExpect(jsonPath("$.statusCode", is(406)))
                 .andExpect(jsonPath("$.message",
-                        is("Could not find acceptable representation. Acceptable formats: application/xml and application/hal+json")))
+                        is("Could not find acceptable representation. Acceptable formats: application/xml and application/json")))
                 .andExpect(jsonPath("$.error",
                         is("org.springframework.web.HttpMediaTypeNotAcceptableException: Could not find acceptable representation")));
     }
 
     @Test
     void findGuestByName() throws Exception {
-        mockMvc.perform(get("/guests/name-search?format=json")
+        mockMvc.perform(get("/v1/guests/name-search?format=json")
                         .param("firstName", "kátia")
                         .param("lastName", "moura"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/hal+json"))
+                .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$._embedded.guestList[0].id", is(1000)))
                 .andExpect(jsonPath("$._embedded.guestList[0].name.firstName", is("Kátia")))
                 .andExpect(jsonPath("$._embedded.guestList[0].stay", is("RESERVED")))
                 .andExpect(jsonPath("$._embedded.guestList[0].email", is("katia@email.com")));
 
-        mockMvc.perform(get("/guests/name-search?format=xml")
+        mockMvc.perform(get("/v1/guests/name-search?format=xml")
                         .param("firstName", "kátia")
                         .param("lastName", "moura"))
                 .andExpect(status().isOk())
@@ -168,15 +168,15 @@ class GuestControllerTest {
 
     @Test
     void searchGuests() throws Exception {
-        mockMvc.perform(get("/guests/search?format=json").param("search", "RESERVED"))
+        mockMvc.perform(get("/v1/guests/search?format=json").param("search", "RESERVED"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/hal+json"))
+                .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$._embedded.guestList[0].id", is(1000)))
                 .andExpect(jsonPath("$._embedded.guestList[0].name.firstName", is("Kátia")))
                 .andExpect(jsonPath("$._embedded.guestList[0].stay", is("RESERVED")))
                 .andExpect(jsonPath("$._embedded.guestList[0].email", is("katia@email.com")));
 
-        mockMvc.perform(get("/guests/search?format=xml").param("search", "RESERVED"))
+        mockMvc.perform(get("/v1/guests/search?format=xml").param("search", "RESERVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
                 .andExpect(xpath("CollectionModel/links/rel").string("self"))
@@ -192,7 +192,7 @@ class GuestControllerTest {
         guest.setName(new Name("Maria", "Ferreira"));
         guest.setAddress(new Address("Rua Goiás", 231, "Aracaju"));
 
-        mockMvc.perform(post("/guests")
+        mockMvc.perform(post("/v1/guests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(guest))
                         .with(csrf()))
@@ -210,9 +210,9 @@ class GuestControllerTest {
         List<Guest> guests = entityManager.createQuery("from Guest order by id", Guest.class).getResultList();
         assertEquals(1000, guests.get(0).getId());
 
-        mockMvc.perform(delete("/guests/{id}", 1000).with(csrf()))
+        mockMvc.perform(delete("/v1/guests/{id}", 1000).with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/hal+json"));
+                .andExpect(content().contentType("application/json"));
 
         guests = entityManager.createQuery("from Guest order by id", Guest.class).getResultList();
         assertEquals(3, guests.size());
@@ -220,14 +220,14 @@ class GuestControllerTest {
 
     @Test
     void checkIn() throws Exception {
-        mockMvc.perform(patch("/guests/{id}/check-in", 1000).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/check-in", 1000).with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/hal+json"));
+                .andExpect(content().contentType("application/json"));
 
         final List<Guest> guests = entityManager.createQuery("from Guest order by id", Guest.class).getResultList();
         assertEquals(Stay.CHECKED_IN, guests.get(0).getStay());
 
-        mockMvc.perform(patch("/guests/{id}/check-in", 1001).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/check-in", 1001).with(csrf()))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType("application/problem+json"))
                 .andExpect(jsonPath("$.title", is("405 Method not allowed")))
@@ -238,14 +238,14 @@ class GuestControllerTest {
 
     @Test
     void checkOut() throws Exception {
-        mockMvc.perform(patch("/guests/{id}/check-out", 1002).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/check-out", 1002).with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/hal+json"));
+                .andExpect(content().contentType("application/json"));
 
         final List<Guest> guests = entityManager.createQuery("from Guest order by id", Guest.class).getResultList();
         assertEquals(Stay.CHECKED_OUT, guests.get(2).getStay());
 
-        mockMvc.perform(patch("/guests/{id}/check-out", 1000).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/check-out", 1000).with(csrf()))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType("application/problem+json"))
                 .andExpect(jsonPath("$.title", is("405 Method not allowed")))
@@ -256,14 +256,14 @@ class GuestControllerTest {
 
     @Test
     void cancelReserve() throws Exception {
-        mockMvc.perform(patch("/guests/{id}/cancel", 1000).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/cancel", 1000).with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/hal+json"));
+                .andExpect(content().contentType("application/json"));
 
         final List<Guest> guests = entityManager.createQuery("from Guest order by id", Guest.class).getResultList();
         assertEquals(Stay.CANCELLED, guests.get(0).getStay());
 
-        mockMvc.perform(patch("/guests/{id}/cancel", 1003).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/cancel", 1003).with(csrf()))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType("application/problem+json"))
                 .andExpect(jsonPath("$.title", is("405 Method not allowed")))

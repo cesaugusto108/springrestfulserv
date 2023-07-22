@@ -55,11 +55,13 @@ public class ApplicationWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/guests/**").hasRole(role1)
-                .antMatchers(HttpMethod.POST, "/guests/**").hasRole(role2)
-                .antMatchers(HttpMethod.PUT, "/guests/**").hasRole(role2)
-                .antMatchers(HttpMethod.DELETE, "/guests/**").hasRole(role3)
-                .antMatchers(HttpMethod.PATCH, "/guests/**").hasAnyRole(role2, role3)
+                .antMatchers(HttpMethod.GET, "/v1/guests/**").hasRole(role1)
+                .antMatchers(HttpMethod.POST, "/v1/guests/**").hasRole(role2)
+                .antMatchers(HttpMethod.PUT, "/v1/guests/**").hasRole(role2)
+                .antMatchers(HttpMethod.DELETE, "/v1/guests/**").hasRole(role3)
+                .antMatchers(HttpMethod.PATCH, "/v1/guests/**").hasAnyRole(role2, role3)
+                .antMatchers(HttpMethod.GET, "**/swagger-ui/**").permitAll()
+                .antMatchers(HttpMethod.GET, "**/v3/api-docs/**").permitAll()
                 .and()
                 .httpBasic()
                 .and()

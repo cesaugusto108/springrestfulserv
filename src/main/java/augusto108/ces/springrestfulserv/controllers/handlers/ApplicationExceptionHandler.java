@@ -27,7 +27,7 @@ public class ApplicationExceptionHandler {
                 HttpStatus.NOT_ACCEPTABLE,
                 e.getMessage() +
                         ". Acceptable formats: " + MediaType.APPLICATION_XML_VALUE +
-                        " and " + MediaTypes.HAL_JSON_VALUE,
+                        " and " + MediaType.APPLICATION_JSON_VALUE,
                 e.toString());
 
         return ResponseEntity

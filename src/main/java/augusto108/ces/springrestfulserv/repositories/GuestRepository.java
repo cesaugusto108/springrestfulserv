@@ -1,7 +1,7 @@
 package augusto108.ces.springrestfulserv.repositories;
 
-import augusto108.ces.springrestfulserv.model.Guest;
-import augusto108.ces.springrestfulserv.model.Name;
+import augusto108.ces.springrestfulserv.entities.Guest;
+import augusto108.ces.springrestfulserv.entities.Name;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

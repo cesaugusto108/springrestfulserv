@@ -1,9 +1,11 @@
 package augusto108.ces.springrestfulserv.services;
 
+import augusto108.ces.springrestfulserv.dto.v1.GuestDto;
+import augusto108.ces.springrestfulserv.entities.Guest;
+import augusto108.ces.springrestfulserv.entities.Name;
+import augusto108.ces.springrestfulserv.entities.enums.Stay;
 import augusto108.ces.springrestfulserv.exceptions.GuestNotFoundException;
-import augusto108.ces.springrestfulserv.model.Guest;
-import augusto108.ces.springrestfulserv.model.Name;
-import augusto108.ces.springrestfulserv.model.enums.Stay;
+import augusto108.ces.springrestfulserv.mapper.DtoMapper;
 import augusto108.ces.springrestfulserv.repositories.GuestRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,26 +23,28 @@ public class GuestServiceImpl implements GuestService {
     }
 
     @Override
-    public Guest fetchGuest(Long id) {
-        return repository.findById(id)
+    public GuestDto fetchGuest(Long id) {
+        final Guest guest = repository.findById(id)
                 .orElseThrow(() -> new GuestNotFoundException(ERROR_MESSAGE + id));
+
+        return DtoMapper.fromGuestToGuestDto(guest);
     }
 
     @Override
-    public List<Guest> fetchGuests() {
-        Iterable<Guest> guests = repository.findAll();
+    public List<GuestDto> fetchGuests() {
+        final Iterable<Guest> guests = repository.findAll();
 
-        List<Guest> guestList = new ArrayList<>();
+        final List<GuestDto> guestDtoList = new ArrayList<>();
 
         for (Guest guest : guests) {
-            guestList.add(guest);
+            guestDtoList.add(DtoMapper.fromGuestToGuestDto(guest));
         }
 
-        return guestList;
+        return guestDtoList;
     }
 
     @Override
-    public List<Guest> findByName(Name name) {
+    public List<GuestDto> findByName(Name name) {
         final char firstNameFirstChar = name.getFirstName().toUpperCase().charAt(0);
         final String firstNameSubString = name.getFirstName().substring(1).toLowerCase();
         final String firstName = (firstNameFirstChar + firstNameSubString).trim();
@@ -51,47 +55,61 @@ public class GuestServiceImpl implements GuestService {
 
         final Name n = new Name(firstName, lastName);
 
-        return repository.findByName(n);
+        final List<Guest> guestDtoList = repository.findByName(n);
+
+        return DtoMapper.fromGuestListToGuestDtoList(guestDtoList);
     }
 
     @Override
-    public List<Guest> searchGuests(String search) {
-        return repository.searchGuests(search.toLowerCase().trim());
+    public Guest findGuestById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new GuestNotFoundException(ERROR_MESSAGE + id));
     }
 
     @Override
-    public Guest saveGuest(Guest guest) {
-        return repository.save(guest);
+    public List<GuestDto> searchGuests(String search) {
+        final List<Guest> guestDtoList = repository.searchGuests(search.toLowerCase().trim());
+
+        return DtoMapper.fromGuestListToGuestDtoList(guestDtoList);
+    }
+
+    @Override
+    public GuestDto saveGuest(Guest guest) {
+        final Guest g = repository.save(guest);
+
+        return DtoMapper.fromGuestToGuestDto(g);
     }
 
     @Override
     public void deleteGuest(Long id) {
-        Guest guest = fetchGuest(id);
+        Guest guest = findGuestById(id);
 
-        if (guest == null)
-            throw new GuestNotFoundException(ERROR_MESSAGE + id);
-        else
-            repository.delete(guest);
+        repository.delete(guest);
     }
 
     @Override
-    public Guest checkIn(Guest guest) {
+    public GuestDto checkIn(Guest guest) {
         guest.setStay(Stay.CHECKED_IN);
 
-        return repository.save(guest);
+        final Guest g = repository.save(guest);
+
+        return DtoMapper.fromGuestToGuestDto(g);
     }
 
     @Override
-    public Guest checkOut(Guest guest) {
+    public GuestDto checkOut(Guest guest) {
         guest.setStay(Stay.CHECKED_OUT);
 
-        return repository.save(guest);
+        final Guest g = repository.save(guest);
+
+        return DtoMapper.fromGuestToGuestDto(g);
     }
 
     @Override
-    public Guest cancelReserve(Guest guest) {
+    public GuestDto cancelReserve(Guest guest) {
         guest.setStay(Stay.CANCELLED);
 
-        return repository.save(guest);
+        final Guest g = repository.save(guest);
+
+        return DtoMapper.fromGuestToGuestDto(g);
     }
 }

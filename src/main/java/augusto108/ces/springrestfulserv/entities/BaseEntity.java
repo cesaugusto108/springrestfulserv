@@ -1,4 +1,4 @@
-package augusto108.ces.springrestfulserv.model;
+package augusto108.ces.springrestfulserv.entities;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,7 +7,7 @@ import javax.persistence.MappedSuperclass;
 import java.util.Objects;
 
 @MappedSuperclass
-public abstract class BaseEntity {
+public abstract sealed class BaseEntity permits Guest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

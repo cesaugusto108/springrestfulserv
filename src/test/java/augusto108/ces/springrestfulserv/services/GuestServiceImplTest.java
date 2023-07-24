@@ -1,7 +1,8 @@
 package augusto108.ces.springrestfulserv.services;
 
-import augusto108.ces.springrestfulserv.model.*;
-import augusto108.ces.springrestfulserv.model.enums.Stay;
+import augusto108.ces.springrestfulserv.dto.v1.GuestDto;
+import augusto108.ces.springrestfulserv.entities.*;
+import augusto108.ces.springrestfulserv.entities.enums.Stay;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,21 +46,21 @@ public class GuestServiceImplTest {
 
     @Test
     void fetchGuest() {
-        final Guest guest = guestService.fetchGuest(1000L);
+        final GuestDto guestDto = guestService.fetchGuest(1000L);
 
-        assertEquals("RESERVED", guest.getStay().toString());
-        assertEquals("Kátia", guest.getName().getFirstName());
-        assertEquals("Moura", guest.getName().getLastName());
-        assertEquals("katia@email.com", guest.getEmail());
+        assertEquals("RESERVED", guestDto.getStay().toString());
+        assertEquals("Kátia", guestDto.getName().getFirstName());
+        assertEquals("Moura", guestDto.getName().getLastName());
+        assertEquals("katia@email.com", guestDto.getEmailAddress().toString());
     }
 
     @Test
     void fetchGuests() {
-        final List<Guest> guests = guestService.fetchGuests();
+        final List<GuestDto> guestDtoList = guestService.fetchGuests();
 
-        assertEquals(1, guests.size());
-        assertEquals("RESERVED", guests.get(0).getStay().toString());
-        assertEquals(1000, guests.get(0).getId(), "Id should be 1000");
+        assertEquals(1, guestDtoList.size());
+        assertEquals("RESERVED", guestDtoList.get(0).getStay().toString());
+        assertEquals(1000, guestDtoList.get(0).getId(), "Id should be 1000");
     }
 
     @Test
@@ -67,20 +68,20 @@ public class GuestServiceImplTest {
         final Guest g = entityManager
                 .createQuery("from Guest g where email = 'katia@email.com'", Guest.class)
                 .getSingleResult();
-        final List<Guest> guests = guestService.findByName(g.getName());
+        final List<GuestDto> guestDtoList = guestService.findByName(g.getName());
 
-        assertEquals(1, guests.size());
-        assertEquals("Moura", guests.get(0).getName().getLastName());
-        assertEquals("RESERVED", guests.get(0).getStay().toString());
+        assertEquals(1, guestDtoList.size());
+        assertEquals("Moura", guestDtoList.get(0).getName().getLastName());
+        assertEquals("RESERVED", guestDtoList.get(0).getStay().toString());
     }
 
     @Test
     void searchGuests() {
-        final List<Guest> guests = guestService.searchGuests("Moura");
+        final List<GuestDto> guestDtoList = guestService.searchGuests("Moura");
 
-        assertEquals(1, guests.size());
-        assertEquals("Moura", guests.get(0).getName().getLastName());
-        assertEquals("RESERVED", guests.get(0).getStay().toString());
+        assertEquals(1, guestDtoList.size());
+        assertEquals("Moura", guestDtoList.get(0).getName().getLastName());
+        assertEquals("RESERVED", guestDtoList.get(0).getStay().toString());
     }
 
     @Test

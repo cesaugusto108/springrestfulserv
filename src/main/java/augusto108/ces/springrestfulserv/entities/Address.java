@@ -1,10 +1,10 @@
-package augusto108.ces.springrestfulserv.model;
+package augusto108.ces.springrestfulserv.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Address {
+public final class Address {
     @Column(name = "guest_address_street")
     private String street;
 

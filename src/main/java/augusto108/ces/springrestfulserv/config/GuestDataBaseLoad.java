@@ -1,7 +1,7 @@
 package augusto108.ces.springrestfulserv.config;
 
-import augusto108.ces.springrestfulserv.model.*;
-import augusto108.ces.springrestfulserv.model.enums.Stay;
+import augusto108.ces.springrestfulserv.entities.*;
+import augusto108.ces.springrestfulserv.entities.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;

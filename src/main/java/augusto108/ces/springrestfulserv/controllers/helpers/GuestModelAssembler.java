@@ -1,8 +1,8 @@
 package augusto108.ces.springrestfulserv.controllers.helpers;
 
 import augusto108.ces.springrestfulserv.controllers.GuestController;
-import augusto108.ces.springrestfulserv.model.Guest;
-import augusto108.ces.springrestfulserv.model.enums.Stay;
+import augusto108.ces.springrestfulserv.dto.v1.GuestDto;
+import augusto108.ces.springrestfulserv.entities.enums.Stay;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -11,37 +11,37 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class GuestModelAssembler implements RepresentationModelAssembler<Guest, EntityModel<Guest>> {
+public class GuestModelAssembler implements RepresentationModelAssembler<GuestDto, EntityModel<GuestDto>> {
     @Override
-    public EntityModel<Guest> toModel(Guest guest) {
-        EntityModel<Guest> guestEntityModel = EntityModel.of(
-                guest,
-                linkTo(methodOn(GuestController.class).fetchGuest(guest.getId())).withSelfRel(),
+    public EntityModel<GuestDto> toModel(GuestDto guestDto) {
+        EntityModel<GuestDto> guestEntityModel = EntityModel.of(
+                guestDto,
+                linkTo(methodOn(GuestController.class).fetchGuest(guestDto.getId())).withSelfRel(),
                 linkTo(methodOn(GuestController.class).fetchAllGuests()).withRel("guests")
         );
 
-        confirmReserveStatus(guest, guestEntityModel);
-        confirmCheckInStatus(guest, guestEntityModel);
+        confirmReserveStatus(guestDto, guestEntityModel);
+        confirmCheckInStatus(guestDto, guestEntityModel);
 
         return guestEntityModel;
     }
 
-    private static void confirmReserveStatus(Guest guest, EntityModel<Guest> guestEntityModel) {
-        if (guest.getStay() == Stay.RESERVED) {
-            guestEntityModel
-                    .add(linkTo(methodOn(GuestController.class).checkIn(guest.getId()))
+    private static void confirmReserveStatus(GuestDto guestDto, EntityModel<GuestDto> guestDtoEntityModel) {
+        if (guestDto.getStay() == Stay.RESERVED) {
+            guestDtoEntityModel
+                    .add(linkTo(methodOn(GuestController.class).checkIn(guestDto.getId()))
                             .withRel("check-in"));
-            guestEntityModel
-                    .add(linkTo(methodOn(GuestController.class).cancelReserve(guest.getId()))
+            guestDtoEntityModel
+                    .add(linkTo(methodOn(GuestController.class).cancelReserve(guestDto.getId()))
                             .withRel("cancel-reserve"));
 
         }
     }
 
-    private static void confirmCheckInStatus(Guest guest, EntityModel<Guest> guestEntityModel) {
-        if (guest.getStay() == Stay.CHECKED_IN) {
-            guestEntityModel
-                    .add(linkTo(methodOn(GuestController.class).checkOut(guest.getId()))
+    private static void confirmCheckInStatus(GuestDto guestDto, EntityModel<GuestDto> guestDtoEntityModel) {
+        if (guestDto.getStay() == Stay.CHECKED_IN) {
+            guestDtoEntityModel
+                    .add(linkTo(methodOn(GuestController.class).checkOut(guestDto.getId()))
                             .withRel("check-out"));
         }
     }

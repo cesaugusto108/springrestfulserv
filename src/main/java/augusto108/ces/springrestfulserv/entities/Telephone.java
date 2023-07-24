@@ -1,10 +1,10 @@
-package augusto108.ces.springrestfulserv.model;
+package augusto108.ces.springrestfulserv.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Telephone {
+public final class Telephone {
     @Column(name = "guest_telephone")
     private String telephone;
 

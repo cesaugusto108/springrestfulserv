@@ -1,9 +1,9 @@
 package augusto108.ces.springrestfulserv.controllers;
 
-import augusto108.ces.springrestfulserv.model.Address;
-import augusto108.ces.springrestfulserv.model.Guest;
-import augusto108.ces.springrestfulserv.model.Name;
-import augusto108.ces.springrestfulserv.model.enums.Stay;
+import augusto108.ces.springrestfulserv.entities.Address;
+import augusto108.ces.springrestfulserv.entities.Guest;
+import augusto108.ces.springrestfulserv.entities.Name;
+import augusto108.ces.springrestfulserv.entities.enums.Stay;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,14 +84,16 @@ class GuestControllerTest {
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.id", is(1000)))
                 .andExpect(jsonPath("$.stay", is("RESERVED")))
-                .andExpect(jsonPath("$.email", is("katia@email.com")));
+                .andExpect(jsonPath("$.emailAddress.username", is("katia")))
+                .andExpect(jsonPath("$.emailAddress.domainName", is("@email.com")));
 
         mockMvc.perform(get("/v1/guests/{id}?format=xml", 1000))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
                 .andExpect(xpath("EntityModel/id").string("1000"))
                 .andExpect(xpath("EntityModel/stay").string("RESERVED"))
-                .andExpect(xpath("EntityModel/email").string("katia@email.com"));
+                .andExpect(xpath("EntityModel/emailAddress/username").string("katia"))
+                .andExpect(xpath("EntityModel/emailAddress/domainName").string("@email.com"));
 
         mockMvc.perform(get("/v1/guests/{id}", 0))
                 .andExpect(status().isNotFound())
@@ -119,10 +121,11 @@ class GuestControllerTest {
         mockMvc.perform(get("/v1/guests?format=json"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$._embedded.guestList", hasSize(4)))
-                .andExpect(jsonPath("$._embedded.guestList[0].id", is(1000)))
-                .andExpect(jsonPath("$._embedded.guestList[0].stay", is("RESERVED")))
-                .andExpect(jsonPath("$._embedded.guestList[0].email", is("katia@email.com")));
+                .andExpect(jsonPath("$._embedded.guestDtoList", hasSize(4)))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1000)))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].emailAddress.username", is("katia")))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].emailAddress.domainName", is("@email.com")));
 
         mockMvc.perform(get("/v1/guests?format=xml"))
                 .andExpect(status().isOk())
@@ -149,10 +152,11 @@ class GuestControllerTest {
                         .param("lastName", "moura"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$._embedded.guestList[0].id", is(1000)))
-                .andExpect(jsonPath("$._embedded.guestList[0].name.firstName", is("Kátia")))
-                .andExpect(jsonPath("$._embedded.guestList[0].stay", is("RESERVED")))
-                .andExpect(jsonPath("$._embedded.guestList[0].email", is("katia@email.com")));
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1000)))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].name.firstName", is("Kátia")))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].emailAddress.username", is("katia")))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].emailAddress.domainName", is("@email.com")));
 
         mockMvc.perform(get("/v1/guests/name-search?format=xml")
                         .param("firstName", "kátia")
@@ -163,7 +167,8 @@ class GuestControllerTest {
                 .andExpect(xpath("CollectionModel/content/content/id").string("1000"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"))
                 .andExpect(xpath("CollectionModel/content/content/stay").string("RESERVED"))
-                .andExpect(xpath("CollectionModel/content/content/email").string("katia@email.com"));
+                .andExpect(xpath("CollectionModel/content/content/emailAddress/username").string("katia"))
+                .andExpect(xpath("CollectionModel/content/content/emailAddress/domainName").string("@email.com"));
     }
 
     @Test
@@ -171,10 +176,11 @@ class GuestControllerTest {
         mockMvc.perform(get("/v1/guests/search?format=json").param("search", "RESERVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$._embedded.guestList[0].id", is(1000)))
-                .andExpect(jsonPath("$._embedded.guestList[0].name.firstName", is("Kátia")))
-                .andExpect(jsonPath("$._embedded.guestList[0].stay", is("RESERVED")))
-                .andExpect(jsonPath("$._embedded.guestList[0].email", is("katia@email.com")));
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1000)))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].name.firstName", is("Kátia")))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].emailAddress.username", is("katia")))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].emailAddress.domainName", is("@email.com")));
 
         mockMvc.perform(get("/v1/guests/search?format=xml").param("search", "RESERVED"))
                 .andExpect(status().isOk())
@@ -183,7 +189,8 @@ class GuestControllerTest {
                 .andExpect(xpath("CollectionModel/content/content/id").string("1000"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"))
                 .andExpect(xpath("CollectionModel/content/content/stay").string("RESERVED"))
-                .andExpect(xpath("CollectionModel/content/content/email").string("katia@email.com"));
+                .andExpect(xpath("CollectionModel/content/content/emailAddress/username").string("katia"))
+                .andExpect(xpath("CollectionModel/content/content/emailAddress/domainName").string("@email.com"));
     }
 
     @Test

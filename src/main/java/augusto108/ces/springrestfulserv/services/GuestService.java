@@ -1,26 +1,29 @@
 package augusto108.ces.springrestfulserv.services;
 
-import augusto108.ces.springrestfulserv.model.Guest;
-import augusto108.ces.springrestfulserv.model.Name;
+import augusto108.ces.springrestfulserv.dto.v1.GuestDto;
+import augusto108.ces.springrestfulserv.entities.Guest;
+import augusto108.ces.springrestfulserv.entities.Name;
 
 import java.util.List;
 
 public interface GuestService {
-    Guest fetchGuest(Long id);
+    GuestDto fetchGuest(Long id);
 
-    List<Guest> fetchGuests();
+    List<GuestDto> fetchGuests();
 
-    List<Guest> findByName(Name name);
+    List<GuestDto> findByName(Name name);
 
-    List<Guest> searchGuests(String search);
+    Guest findGuestById(Long id);
 
-    Guest saveGuest(Guest guest);
+    List<GuestDto> searchGuests(String search);
+
+    GuestDto saveGuest(Guest guest);
 
     void deleteGuest(Long id);
 
-    Guest checkIn(Guest guest);
+    GuestDto checkIn(Guest guest);
 
-    Guest checkOut(Guest guest);
+    GuestDto checkOut(Guest guest);
 
-    Guest cancelReserve(Guest guest);
+    GuestDto cancelReserve(Guest guest);
 }

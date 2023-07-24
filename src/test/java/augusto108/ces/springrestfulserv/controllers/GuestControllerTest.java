@@ -50,6 +50,22 @@ class GuestControllerTest {
 
     @BeforeEach
     void setUp() {
+        final String createTable = """
+                CREATE TABLE IF NOT EXISTS `tb_guest` (
+                  `id` bigint NOT NULL AUTO_INCREMENT,
+                  `guest_address_city` varchar(255) DEFAULT NULL,
+                  `guest_address_number` int DEFAULT NULL,
+                  `guest_address_street` varchar(255) DEFAULT NULL,
+                  `guest_email` varchar(255) DEFAULT NULL,
+                  `guest_email_domain_name` varchar(255) DEFAULT NULL,
+                  `guest_email_username` varchar(255) DEFAULT NULL,
+                  `first_name` varchar(255) DEFAULT NULL,
+                  `last_name` varchar(255) DEFAULT NULL,
+                  `stay` varchar(255) DEFAULT NULL,
+                  `guest_telephone` varchar(255) DEFAULT NULL,
+                  PRIMARY KEY (`id`)
+                );""";
+
         final String query1 = "insert into `tb_guest` (`id`, `guest_address_city`, `guest_address_number`, `guest_address_street`, " +
                 "`guest_email`, `guest_email_domain_name`, `guest_email_username`, `first_name`, `last_name`, `stay`, `guest_telephone`) " +
                 "values (1000, 'Aracaju', 321, 'Rua Porto da Folha', 'katia@email.com', '@email.com', 'katia', 'Kátia', 'Moura', 'RESERVED', '79988712340');";
@@ -66,6 +82,7 @@ class GuestControllerTest {
                 "`guest_email`, `guest_email_domain_name`, `guest_email_username`, `first_name`, `last_name`, `stay`, `guest_telephone`) " +
                 "values (1003, 'Aracaju', 909, 'Rua Estância', 'penelope@email.com', '@email.com', 'penelope', 'Penelope', 'Teixeira', 'CANCELLED', '79988712311');";
 
+        jdbcTemplate.execute(createTable);
         jdbcTemplate.execute(query1);
         jdbcTemplate.execute(query2);
         jdbcTemplate.execute(query3);

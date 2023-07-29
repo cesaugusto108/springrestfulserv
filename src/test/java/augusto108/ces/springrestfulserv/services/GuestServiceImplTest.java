@@ -1,137 +1,153 @@
 package augusto108.ces.springrestfulserv.services;
 
+import augusto108.ces.springrestfulserv.TestContainersConfiguration;
 import augusto108.ces.springrestfulserv.dto.v1.GuestDto;
 import augusto108.ces.springrestfulserv.entities.*;
 import augusto108.ces.springrestfulserv.entities.enums.Stay;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Transactional
 @DisplayNameGeneration(DisplayNameGenerator.Simple.class)
-public class GuestServiceImplTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class GuestServiceImplTest extends TestContainersConfiguration {
     @Autowired
     private GuestService guestService;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @BeforeEach
-    void setUp() {
-        final String createTable = """
-                CREATE TABLE IF NOT EXISTS `tb_guest` (
-                  `id` bigint NOT NULL AUTO_INCREMENT,
-                  `guest_address_city` varchar(255) DEFAULT NULL,
-                  `guest_address_number` int DEFAULT NULL,
-                  `guest_address_street` varchar(255) DEFAULT NULL,
-                  `guest_email` varchar(255) DEFAULT NULL,
-                  `guest_email_domain_name` varchar(255) DEFAULT NULL,
-                  `guest_email_username` varchar(255) DEFAULT NULL,
-                  `first_name` varchar(255) DEFAULT NULL,
-                  `last_name` varchar(255) DEFAULT NULL,
-                  `stay` varchar(255) DEFAULT NULL,
-                  `guest_telephone` varchar(255) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-                );""";
-
-        final String query = "insert into `tb_guest` (`id`, `guest_address_city`, `guest_address_number`, `guest_address_street`, " +
-                "`guest_email`, `guest_email_domain_name`, `guest_email_username`, `first_name`, `last_name`, `stay`, `guest_telephone`) " +
-                "values (1000, 'Aracaju', 321, 'Rua Porto da Folha', 'katia@email.com', '@email.com', 'katia', 'Kátia', 'Moura', 'RESERVED', '79988712340');";
-
-        jdbcTemplate.execute(createTable);
-        jdbcTemplate.execute(query);
-    }
-
-    @AfterEach
-    void tearDown() {
-        jdbcTemplate.execute("delete from tb_guest;");
-    }
-
     @Test
+    @Order(1)
     void fetchGuest() {
-        final GuestDto guestDto = guestService.fetchGuest(1000L);
+        final GuestDto guestDto = guestService.fetchGuest(10L);
 
         assertEquals("RESERVED", guestDto.getStay().toString());
-        assertEquals("Kátia", guestDto.getName().getFirstName());
-        assertEquals("Moura", guestDto.getName().getLastName());
-        assertEquals("katia@email.com", guestDto.getEmailAddress().toString());
+        assertEquals("Joice", guestDto.getName().getFirstName());
+        assertEquals("Mendes", guestDto.getName().getLastName());
+        assertEquals("joice@email.com", guestDto.getEmailAddress().toString());
     }
 
     @Test
+    @Order(2)
     void fetchGuests() {
         final List<GuestDto> guestDtoList = guestService.fetchGuests();
 
-        assertEquals(1, guestDtoList.size());
-        assertEquals("RESERVED", guestDtoList.get(0).getStay().toString());
-        assertEquals(1000, guestDtoList.get(0).getId(), "Id should be 1000");
+        assertEquals(11, guestDtoList.size());
+        assertEquals("CHECKED_OUT", guestDtoList.get(2).getStay().toString());
+        assertEquals(3, guestDtoList.get(2).getId(), "Id should be 3");
     }
 
     @Test
+    @Order(3)
     void findByName() {
-        final Guest g = entityManager
-                .createQuery("from Guest g where email = 'katia@email.com'", Guest.class)
-                .getSingleResult();
-        final List<GuestDto> guestDtoList = guestService.findByName(g.getName());
+        final Guest guest = guestService.findGuestById(10L);
+        final List<GuestDto> guestDtoList = guestService.findByName(guest.getName());
 
         assertEquals(1, guestDtoList.size());
-        assertEquals("Moura", guestDtoList.get(0).getName().getLastName());
+        assertEquals("Mendes", guestDtoList.get(0).getName().getLastName());
         assertEquals("RESERVED", guestDtoList.get(0).getStay().toString());
     }
 
     @Test
+    @Order(4)
     void searchGuests() {
-        final List<GuestDto> guestDtoList = guestService.searchGuests("Moura");
+        final List<GuestDto> guestDtoList = guestService.searchGuests("Mendes");
 
         assertEquals(1, guestDtoList.size());
-        assertEquals("Moura", guestDtoList.get(0).getName().getLastName());
+        assertEquals("Mendes", guestDtoList.get(0).getName().getLastName());
         assertEquals("RESERVED", guestDtoList.get(0).getStay().toString());
     }
 
     @Test
+    @Order(10)
     void saveGuest() {
-        final Guest g1 = new Guest(
+        final Guest guest = new Guest(
                 new Name("Marcela", "Carvalho"),
-                new Address("Av. Augusto Franco", 142, "Aracaju"),
+                new Address("Avenida Augusto Franco", 142, "Aracaju"),
                 new Telephone("79999999999"),
                 "marcela@email.com",
                 new EmailAddress("marcela", "@email.com"),
                 Stay.RESERVED);
 
-        final Guest g2 = new Guest(
-                new Name("João Carlos", "Souza"),
-                new Address("Rua Boquim", 552, "Aracaju"),
-                new Telephone("79998989898"),
-                "joaocarlos@email.com",
-                new EmailAddress("joaocarlos", "email.com"),
-                Stay.CHECKED_IN);
+        guestService.saveGuest(guest);
 
-        guestService.saveGuest(g1);
-        guestService.saveGuest(g2);
+        final List<GuestDto> guests = guestService.fetchGuests();
 
-        final List<Guest> guests = entityManager
-                .createQuery("from Guest order by id", Guest.class)
-                .getResultList();
+        assertEquals(12, guests.size());
+        assertEquals(Stay.RESERVED, guests.get(11).getStay());
+        assertEquals("marcela@email.com", guests.get(11).getEmailAddress().toString());
+        assertEquals("79999999999", guests.get(11).getTelephone().toString());
+    }
 
-        assertEquals(3, guests.size());
-        assertEquals(Stay.RESERVED, guests.get(0).getStay());
-        assertEquals("marcela@email.com", guests.get(0).getEmail());
-        assertEquals("79999999999", guests.get(0).getTelephone().toString());
-        assertEquals(Stay.CHECKED_IN, guests.get(1).getStay());
-        assertEquals("joaocarlos@email.com", guests.get(1).getEmail());
-        assertEquals("79998989898", guests.get(1).getTelephone().toString());
+    @Test
+    @Order(9)
+    void deleteGuest() {
+        final Guest guest = new Guest(
+                new Name("Leandro", "Souza"),
+                new Address("Avenida Ivo do Prado", 142, "Aracaju"),
+                new Telephone("79999990000"),
+                "leandro@email.com",
+                new EmailAddress("leandro", "@email.com"),
+                Stay.RESERVED);
+
+        guestService.saveGuest(guest);
+
+        final GuestDto guestToDelete = guestService.searchGuests("Souza").get(0);
+
+        guestService.deleteGuest(guestToDelete.getId());
+
+        final List<GuestDto> guests = guestService.fetchGuests();
+
+        assertEquals(11, guests.size());
+        assertEquals(0, guestService.searchGuests("Souza").size());
+    }
+
+    @Test
+    @Order(5)
+    void findGuestById() {
+        final Guest guest = guestService.findGuestById(2L);
+
+        assertEquals("rita@email.com", guest.getEmail());
+    }
+
+    @Test
+    @Order(6)
+    void checkIn() {
+        Guest guest = guestService.findGuestById(2L);
+
+        guestService.checkIn(guest);
+
+        guest = guestService.findGuestById(2L);
+
+        assertEquals("CHECKED_IN", guest.getStay().toString());
+    }
+
+    @Test
+    @Order(7)
+    void checkOut() {
+        Guest guest = guestService.findGuestById(11L);
+
+        guestService.checkOut(guest);
+
+        guest = guestService.findGuestById(11L);
+
+        assertEquals("CHECKED_OUT", guest.getStay().toString());
+    }
+
+    @Test
+    @Order(8)
+    void cancelReserve() {
+        Guest guest = guestService.findGuestById(9L);
+
+        guestService.cancelReserve(guest);
+
+        guest = guestService.findGuestById(9L);
+
+        assertEquals("CANCELLED", guest.getStay().toString());
     }
 }

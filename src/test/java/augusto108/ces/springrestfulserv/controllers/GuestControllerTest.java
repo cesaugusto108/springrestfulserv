@@ -1,22 +1,22 @@
 package augusto108.ces.springrestfulserv.controllers;
 
+import augusto108.ces.springrestfulserv.TestContainersConfiguration;
+import augusto108.ces.springrestfulserv.dto.v1.GuestDto;
 import augusto108.ces.springrestfulserv.entities.Address;
 import augusto108.ces.springrestfulserv.entities.Guest;
 import augusto108.ces.springrestfulserv.entities.Name;
 import augusto108.ces.springrestfulserv.entities.enums.Stay;
+import augusto108.ces.springrestfulserv.services.GuestService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -32,82 +32,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser
 @ActiveProfiles("test")
 @DisplayNameGeneration(DisplayNameGenerator.Simple.class)
-class GuestControllerTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class GuestControllerTest extends TestContainersConfiguration {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     private ObjectMapper objectMapper;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     private GuestController guestController;
 
-    @BeforeEach
-    void setUp() {
-        final String createTable = """
-                CREATE TABLE IF NOT EXISTS `tb_guest` (
-                  `id` bigint NOT NULL AUTO_INCREMENT,
-                  `guest_address_city` varchar(255) DEFAULT NULL,
-                  `guest_address_number` int DEFAULT NULL,
-                  `guest_address_street` varchar(255) DEFAULT NULL,
-                  `guest_email` varchar(255) DEFAULT NULL,
-                  `guest_email_domain_name` varchar(255) DEFAULT NULL,
-                  `guest_email_username` varchar(255) DEFAULT NULL,
-                  `first_name` varchar(255) DEFAULT NULL,
-                  `last_name` varchar(255) DEFAULT NULL,
-                  `stay` varchar(255) DEFAULT NULL,
-                  `guest_telephone` varchar(255) DEFAULT NULL,
-                  PRIMARY KEY (`id`)
-                );""";
-
-        final String query1 = "insert into `tb_guest` (`id`, `guest_address_city`, `guest_address_number`, `guest_address_street`, " +
-                "`guest_email`, `guest_email_domain_name`, `guest_email_username`, `first_name`, `last_name`, `stay`, `guest_telephone`) " +
-                "values (1000, 'Aracaju', 321, 'Rua Porto da Folha', 'katia@email.com', '@email.com', 'katia', 'Kátia', 'Moura', 'RESERVED', '79988712340');";
-
-        final String query2 = "insert into `tb_guest` (`id`, `guest_address_city`, `guest_address_number`, `guest_address_street`, " +
-                "`guest_email`, `guest_email_domain_name`, `guest_email_username`, `first_name`, `last_name`, `stay`, `guest_telephone`) " +
-                "values (1001, 'Aracaju', 897, 'Rua Itabaiana', 'cosme@email.com', '@email.com', 'cosme', 'Cosme', 'Oliveira', 'CHECKED_OUT', '79988712344');";
-
-        final String query3 = "insert into `tb_guest` (`id`, `guest_address_city`, `guest_address_number`, `guest_address_street`, " +
-                "`guest_email`, `guest_email_domain_name`, `guest_email_username`, `first_name`, `last_name`, `stay`, `guest_telephone`) " +
-                "values (1002, 'Aracaju', 653, 'Rua Lagarto', 'ursula@email.com', '@email.com', 'ursula', 'Úrsula', 'Teles', 'CHECKED_IN', '79988712389');";
-
-        final String query4 = "insert into `tb_guest` (`id`, `guest_address_city`, `guest_address_number`, `guest_address_street`, " +
-                "`guest_email`, `guest_email_domain_name`, `guest_email_username`, `first_name`, `last_name`, `stay`, `guest_telephone`) " +
-                "values (1003, 'Aracaju', 909, 'Rua Estância', 'penelope@email.com', '@email.com', 'penelope', 'Penelope', 'Teixeira', 'CANCELLED', '79988712311');";
-
-        jdbcTemplate.execute(createTable);
-        jdbcTemplate.execute(query1);
-        jdbcTemplate.execute(query2);
-        jdbcTemplate.execute(query3);
-        jdbcTemplate.execute(query4);
-    }
-
-    @AfterEach
-    void tearDown() {
-        jdbcTemplate.execute("delete from `tb_guest`;");
-    }
+    @Autowired
+    private GuestService guestService;
 
     @Test
+    @Order(1)
     void fetchGuest() throws Exception {
-        mockMvc.perform(get("/v1/guests/{id}?format=json", 1000))
+        mockMvc.perform(get("/v1/guests/{id}?format=json", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.id", is(1000)))
+                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.stay", is("RESERVED")))
                 .andExpect(jsonPath("$.emailAddress.username", is("katia")))
                 .andExpect(jsonPath("$.emailAddress.domainName", is("@email.com")));
 
-        mockMvc.perform(get("/v1/guests/{id}?format=xml", 1000))
+        mockMvc.perform(get("/v1/guests/{id}?format=xml", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
-                .andExpect(xpath("EntityModel/id").string("1000"))
+                .andExpect(xpath("EntityModel/id").string("1"))
                 .andExpect(xpath("EntityModel/stay").string("RESERVED"))
                 .andExpect(xpath("EntityModel/emailAddress/username").string("katia"))
                 .andExpect(xpath("EntityModel/emailAddress/domainName").string("@email.com"));
@@ -134,12 +87,13 @@ class GuestControllerTest {
     }
 
     @Test
+    @Order(2)
     void fetchAllGuests() throws Exception {
         mockMvc.perform(get("/v1/guests?format=json"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$._embedded.guestDtoList", hasSize(4)))
-                .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1000)))
+                .andExpect(jsonPath("$._embedded.guestDtoList", hasSize(11)))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1)))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].emailAddress.username", is("katia")))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].emailAddress.domainName", is("@email.com")));
@@ -148,7 +102,7 @@ class GuestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
                 .andExpect(xpath("CollectionModel/links/rel").string("self"))
-                .andExpect(xpath("CollectionModel/content/content/id").string("1000"))
+                .andExpect(xpath("CollectionModel/content/content/id").string("1"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"));
 
         mockMvc.perform(get("/v1/guests?format=yml"))
@@ -163,13 +117,14 @@ class GuestControllerTest {
     }
 
     @Test
+    @Order(3)
     void findGuestByName() throws Exception {
         mockMvc.perform(get("/v1/guests/name-search?format=json")
                         .param("firstName", "kátia")
                         .param("lastName", "moura"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1000)))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1)))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].name.firstName", is("Kátia")))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].emailAddress.username", is("katia")))
@@ -181,7 +136,7 @@ class GuestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
                 .andExpect(xpath("CollectionModel/links/rel").string("self"))
-                .andExpect(xpath("CollectionModel/content/content/id").string("1000"))
+                .andExpect(xpath("CollectionModel/content/content/id").string("1"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"))
                 .andExpect(xpath("CollectionModel/content/content/stay").string("RESERVED"))
                 .andExpect(xpath("CollectionModel/content/content/emailAddress/username").string("katia"))
@@ -189,11 +144,12 @@ class GuestControllerTest {
     }
 
     @Test
+    @Order(4)
     void searchGuests() throws Exception {
         mockMvc.perform(get("/v1/guests/search?format=json").param("search", "RESERVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1000)))
+                .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1)))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].name.firstName", is("Kátia")))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].emailAddress.username", is("katia")))
@@ -203,7 +159,7 @@ class GuestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
                 .andExpect(xpath("CollectionModel/links/rel").string("self"))
-                .andExpect(xpath("CollectionModel/content/content/id").string("1000"))
+                .andExpect(xpath("CollectionModel/content/content/id").string("1"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"))
                 .andExpect(xpath("CollectionModel/content/content/stay").string("RESERVED"))
                 .andExpect(xpath("CollectionModel/content/content/emailAddress/username").string("katia"))
@@ -211,6 +167,7 @@ class GuestControllerTest {
     }
 
     @Test
+    @Order(9)
     void saveOrUpdateGuest() throws Exception {
         final Guest guest = new Guest();
         guest.setName(new Name("Maria", "Ferreira"));
@@ -222,72 +179,86 @@ class GuestControllerTest {
                         .with(csrf()))
                 .andExpect(status().isCreated());
 
-        final List<Guest> guests = entityManager.createQuery("from Guest order by id", Guest.class).getResultList();
-        assertEquals(5, guests.size());
-        assertEquals(Stay.RESERVED, guests.get(0).getStay());
-        assertEquals(1, guests.get(0).getId());
-        assertEquals("Ferreira", guests.get(0).getName().getLastName());
+        final List<GuestDto> guests = guestService.fetchGuests();
+        assertEquals(12, guests.size());
+        assertEquals("Ferreira", guests.get(11).getName().getLastName());
+
+        guestService.deleteGuest(guests.get(11).getId());
     }
 
     @Test
+    @Order(8)
     void deleteGuest() throws Exception {
-        List<Guest> guests = entityManager.createQuery("from Guest order by id", Guest.class).getResultList();
-        assertEquals(1000, guests.get(0).getId());
+        final Guest guest = new Guest();
+        guest.setName(new Name("Ana", "Guimarães"));
+        guest.setAddress(new Address("Rua Paraíba", 65, "Aracaju"));
 
-        mockMvc.perform(delete("/v1/guests/{id}", 1000).with(csrf()))
+        mockMvc.perform(post("/v1/guests")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(guest))
+                        .with(csrf()))
+                .andExpect(status().isCreated());
+
+        List<GuestDto> guests = guestService.fetchGuests();
+        assertEquals(6, guests.get(5).getId());
+
+        mockMvc.perform(delete("/v1/guests/{id}", 6).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"));
 
-        guests = entityManager.createQuery("from Guest order by id", Guest.class).getResultList();
-        assertEquals(3, guests.size());
+        guests = guestService.fetchGuests();
+        assertEquals(11, guests.size());
     }
 
     @Test
+    @Order(5)
     void checkIn() throws Exception {
-        mockMvc.perform(patch("/v1/guests/{id}/check-in", 1000).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/check-in", 1).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"));
 
-        final List<Guest> guests = entityManager.createQuery("from Guest order by id", Guest.class).getResultList();
+        final List<GuestDto> guests = guestService.fetchGuests();
         assertEquals(Stay.CHECKED_IN, guests.get(0).getStay());
 
-        mockMvc.perform(patch("/v1/guests/{id}/check-in", 1001).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/check-in", 3).with(csrf()))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType("application/problem+json"))
                 .andExpect(jsonPath("$.title", is("405 Method not allowed")))
                 .andExpect(jsonPath("$.detail", is("Cannot check in guest with stay status CHECKED_OUT")));
 
-        assertEquals(Stay.CHECKED_OUT, guests.get(1).getStay());
+        assertEquals(Stay.CHECKED_OUT, guests.get(2).getStay());
     }
 
     @Test
+    @Order(6)
     void checkOut() throws Exception {
-        mockMvc.perform(patch("/v1/guests/{id}/check-out", 1002).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/check-out", 5).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"));
 
-        final List<Guest> guests = entityManager.createQuery("from Guest order by id", Guest.class).getResultList();
+        final List<GuestDto> guests = guestService.fetchGuests();
         assertEquals(Stay.CHECKED_OUT, guests.get(2).getStay());
 
-        mockMvc.perform(patch("/v1/guests/{id}/check-out", 1000).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/check-out", 9).with(csrf()))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType("application/problem+json"))
                 .andExpect(jsonPath("$.title", is("405 Method not allowed")))
                 .andExpect(jsonPath("$.detail", is("Cannot check out guest with stay status RESERVED")));
 
-        assertEquals(Stay.RESERVED, guests.get(0).getStay());
+        assertEquals(Stay.RESERVED, guests.get(8).getStay());
     }
 
     @Test
+    @Order(7)
     void cancelReserve() throws Exception {
-        mockMvc.perform(patch("/v1/guests/{id}/cancel", 1000).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/cancel", 2).with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"));
 
-        final List<Guest> guests = entityManager.createQuery("from Guest order by id", Guest.class).getResultList();
-        assertEquals(Stay.CANCELLED, guests.get(0).getStay());
+        final List<GuestDto> guests = guestService.fetchGuests();
+        assertEquals(Stay.CANCELLED, guests.get(1).getStay());
 
-        mockMvc.perform(patch("/v1/guests/{id}/cancel", 1003).with(csrf()))
+        mockMvc.perform(patch("/v1/guests/{id}/cancel", 7).with(csrf()))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType("application/problem+json"))
                 .andExpect(jsonPath("$.title", is("405 Method not allowed")))

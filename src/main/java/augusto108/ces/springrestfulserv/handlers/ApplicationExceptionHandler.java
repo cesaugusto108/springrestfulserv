@@ -1,7 +1,6 @@
 package augusto108.ces.springrestfulserv.handlers;
 
 import augusto108.ces.springrestfulserv.exceptions.GuestNotFoundException;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
@@ -19,82 +18,56 @@ import java.time.LocalDateTime;
 
 @ControllerAdvice
 public class ApplicationExceptionHandler {
+
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
     @ResponseBody
-    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public ResponseEntity<Problem> handleHttpMediaTypeNotAcceptableException(HttpMediaTypeNotAcceptableException e) {
-        ErrorResponse response = new ErrorResponse(
-                HttpStatus.NOT_ACCEPTABLE,
-                e.getMessage() +
-                        ". Acceptable formats: " + MediaType.APPLICATION_XML_VALUE +
-                        " and " + MediaType.APPLICATION_JSON_VALUE,
-                e.toString());
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_ACCEPTABLE)
-                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
-                .body(Problem.create(response));
+        final HttpStatus notAcceptable = HttpStatus.NOT_ACCEPTABLE;
+        final String applicationXmlValue = MediaType.APPLICATION_XML_VALUE;
+        final String applicationJsonValue = MediaType.APPLICATION_JSON_VALUE;
+        final String message = e.getMessage() + ". Acceptable formats: " + applicationXmlValue + " and " + applicationJsonValue;
+        final ErrorResponse response = new ErrorResponse(notAcceptable, message, e.toString());
+        final String contentType = HttpHeaders.CONTENT_TYPE;
+        final String problemDetailsJsonValue = MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE;
+        final Problem problem = Problem.create(response);
+        return ResponseEntity.status(406).header(contentType, problemDetailsJsonValue).body(problem);
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({GuestNotFoundException.class, NoHandlerFoundException.class})
     @ResponseBody
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Problem> handleNotFound(Exception e) {
-        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND, e.getMessage(), e.toString());
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
-                .body(Problem.create(response));
+        final HttpStatus notFound = HttpStatus.NOT_FOUND;
+        final ErrorResponse response = new ErrorResponse(notFound, e.getMessage(), e.toString());
+        final String contentType = HttpHeaders.CONTENT_TYPE;
+        final String problemDetailsJsonValue = MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE;
+        final Problem problem = Problem.create(response);
+        return ResponseEntity.status(404).header(contentType, problemDetailsJsonValue).body(problem);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NumberFormatException.class)
     @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Problem> handleBadRequest(NumberFormatException e) {
-        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), e.toString());
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
-                .body(Problem.create(response));
+        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        final ErrorResponse response = new ErrorResponse(badRequest, e.getMessage(), e.toString());
+        final String contentType = HttpHeaders.CONTENT_TYPE;
+        final String problemDetailsJsonValue = MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE;
+        final Problem problem = Problem.create(response);
+        return ResponseEntity.status(400).header(contentType, problemDetailsJsonValue).body(problem);
     }
 
-    private static class ErrorResponse {
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
-        private final LocalDateTime timestamp;
-
-        private final HttpStatus status;
-        private final int statusCode;
-        private final String message;
-        private final String error;
+    public record ErrorResponse(
+            LocalDateTime timestamp,
+            HttpStatus status,
+            int statusCode,
+            String message,
+            String error
+    ) {
 
         public ErrorResponse(HttpStatus status, String message, String error) {
-            this.timestamp = LocalDateTime.now();
-            this.status = status;
-            this.statusCode = status.value();
-            this.message = message;
-            this.error = error;
-        }
-
-        public LocalDateTime getTimestamp() {
-            return timestamp;
-        }
-
-        public HttpStatus getStatus() {
-            return status;
-        }
-
-        public int getStatusCode() {
-            return statusCode;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public String getError() {
-            return error;
+            this(LocalDateTime.now(), status, status.value(), message, error);
         }
     }
 }

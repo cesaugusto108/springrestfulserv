@@ -34,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayNameGeneration(DisplayNameGenerator.Simple.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GuestControllerTest extends TestContainersConfiguration {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -52,6 +53,7 @@ class GuestControllerTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests/{id}?format=json", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
+                .andExpect(header().string("Location", "http://localhost/v1/guests/1"))
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.stay", is("RESERVED")))
                 .andExpect(jsonPath("$.emailAddress.username", is("katia")))
@@ -60,6 +62,7 @@ class GuestControllerTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests/{id}?format=xml", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
+                .andExpect(header().string("Location", "http://localhost/v1/guests/1"))
                 .andExpect(xpath("EntityModel/id").string("1"))
                 .andExpect(xpath("EntityModel/stay").string("RESERVED"))
                 .andExpect(xpath("EntityModel/emailAddress/username").string("katia"))
@@ -92,6 +95,7 @@ class GuestControllerTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests?format=json"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
+                .andExpect(header().string("Location", "http://localhost/v1/guests?format=json"))
                 .andExpect(jsonPath("$._embedded.guestDtoList", hasSize(11)))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1)))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
@@ -101,6 +105,7 @@ class GuestControllerTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests?format=xml"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
+                .andExpect(header().string("Location", "http://localhost/v1/guests?format=xml"))
                 .andExpect(xpath("CollectionModel/links/rel").string("self"))
                 .andExpect(xpath("CollectionModel/content/content/id").string("1"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"));
@@ -120,10 +125,11 @@ class GuestControllerTest extends TestContainersConfiguration {
     @Order(3)
     void findGuestByName() throws Exception {
         mockMvc.perform(get("/v1/guests/name-search?format=json")
-                        .param("firstName", "kátia")
-                        .param("lastName", "moura"))
+                        .param("first", "kátia")
+                        .param("last", "moura"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
+                .andExpect(header().string("Location", "http://localhost/v1/guests/name-search?format=json"))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1)))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].name.firstName", is("Kátia")))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
@@ -131,10 +137,11 @@ class GuestControllerTest extends TestContainersConfiguration {
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].emailAddress.domainName", is("@email.com")));
 
         mockMvc.perform(get("/v1/guests/name-search?format=xml")
-                        .param("firstName", "kátia")
-                        .param("lastName", "moura"))
+                        .param("first", "kátia")
+                        .param("last", "moura"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
+                .andExpect(header().string("Location", "http://localhost/v1/guests/name-search?format=xml"))
                 .andExpect(xpath("CollectionModel/links/rel").string("self"))
                 .andExpect(xpath("CollectionModel/content/content/id").string("1"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"))
@@ -149,6 +156,7 @@ class GuestControllerTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests/search?format=json").param("search", "RESERVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
+                .andExpect(header().string("Location", "http://localhost/v1/guests/search?format=json"))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1)))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].name.firstName", is("Kátia")))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
@@ -158,6 +166,7 @@ class GuestControllerTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests/search?format=xml").param("search", "RESERVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
+                .andExpect(header().string("Location", "http://localhost/v1/guests/search?format=xml"))
                 .andExpect(xpath("CollectionModel/links/rel").string("self"))
                 .andExpect(xpath("CollectionModel/content/content/id").string("1"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"))
@@ -177,7 +186,8 @@ class GuestControllerTest extends TestContainersConfiguration {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(guest))
                         .with(csrf()))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/v1/guests/13"));
 
         final List<GuestDto> guests = guestService.fetchGuests();
         assertEquals(12, guests.size());
@@ -203,8 +213,7 @@ class GuestControllerTest extends TestContainersConfiguration {
         assertEquals(6, guests.get(5).getId());
 
         mockMvc.perform(delete("/v1/guests/{id}", 6).with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"));
+                .andExpect(status().isNoContent());
 
         guests = guestService.fetchGuests();
         assertEquals(11, guests.size());
@@ -215,7 +224,8 @@ class GuestControllerTest extends TestContainersConfiguration {
     void checkIn() throws Exception {
         mockMvc.perform(patch("/v1/guests/{id}/check-in", 1).with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"));
+                .andExpect(content().contentType("application/json"))
+                .andExpect(header().string("Location", "http://localhost/v1/guests/1"));
 
         final List<GuestDto> guests = guestService.fetchGuests();
         assertEquals(Stay.CHECKED_IN, guests.get(0).getStay());
@@ -234,10 +244,11 @@ class GuestControllerTest extends TestContainersConfiguration {
     void checkOut() throws Exception {
         mockMvc.perform(patch("/v1/guests/{id}/check-out", 5).with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"));
+                .andExpect(content().contentType("application/json"))
+                .andExpect(header().string("Location", "http://localhost/v1/guests/5"));
 
         final List<GuestDto> guests = guestService.fetchGuests();
-        assertEquals(Stay.CHECKED_OUT, guests.get(2).getStay());
+        assertEquals(Stay.CHECKED_OUT, guests.get(4).getStay());
 
         mockMvc.perform(patch("/v1/guests/{id}/check-out", 9).with(csrf()))
                 .andExpect(status().isMethodNotAllowed())
@@ -253,7 +264,9 @@ class GuestControllerTest extends TestContainersConfiguration {
     void cancelReserve() throws Exception {
         mockMvc.perform(patch("/v1/guests/{id}/cancel", 2).with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"));
+                .andExpect(content().contentType("application/json"))
+                .andExpect(header().string("Location", "http://localhost/v1/guests/2"));
+
 
         final List<GuestDto> guests = guestService.fetchGuests();
         assertEquals(Stay.CANCELLED, guests.get(1).getStay());

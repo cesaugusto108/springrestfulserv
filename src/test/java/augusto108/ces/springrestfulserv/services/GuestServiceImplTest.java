@@ -38,8 +38,8 @@ public class GuestServiceImplTest extends TestContainersConfiguration {
         final List<GuestDto> guestDtoList = guestService.fetchGuests();
 
         assertEquals(11, guestDtoList.size());
-        assertEquals("CHECKED_OUT", guestDtoList.get(2).getStay().toString());
-        assertEquals(3, guestDtoList.get(2).getId(), "Id should be 3");
+        assertEquals("CHECKED_OUT", guestDtoList.get(3).getStay().toString());
+        assertEquals(4, guestDtoList.get(3).getId(), "Id should be 4");
     }
 
     @Test

@@ -7,13 +7,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
+
     @Bean
     public OpenAPI openAPIconfig() {
-        return new OpenAPI().info(
-                new Info()
-                        .title("Guest tracker")
-                        .description("Demo application with Spring Boot HATEOAS")
-                        .version("v1")
-        );
+        final String title = "Guest tracker";
+        final String description = "Demo application with Spring Boot HATEOAS";
+        final String version = "v1";
+        return new OpenAPI().info(new Info().title(title).description(description).version(version));
     }
 }

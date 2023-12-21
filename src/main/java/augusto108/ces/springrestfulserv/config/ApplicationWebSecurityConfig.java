@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.User;
 @Profile("!test")
 @PropertySource("classpath:application.properties")
 public class ApplicationWebSecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Value("${users.username.user1}")
     private String user1;
 

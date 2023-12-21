@@ -13,15 +13,14 @@ import java.util.stream.Stream;
 
 @ContextConfiguration(initializers = {TestContainersConfiguration.Initializer.class})
 public abstract class TestContainersConfiguration {
+
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
         @Override
         public void initialize(ConfigurableApplicationContext applicationContext) {
             startContainers();
-
             final ConfigurableEnvironment environment = applicationContext.getEnvironment();
             final MapPropertySource testContainers = new MapPropertySource("testContainers", createConnectionConfiguration());
-
             environment.getPropertySources().addFirst(testContainers);
         }
 
@@ -32,11 +31,13 @@ public abstract class TestContainersConfiguration {
         }
 
         private static Map<String, Object> createConnectionConfiguration() {
-            return Map.of(
-                    "spring.datasource.url", mysql.getJdbcUrl(),
-                    "spring.datasource.username", mysql.getUsername(),
-                    "spring.datasource.password", mysql.getPassword()
-            );
+            final String urlKey = "spring.datasource.url";
+            final String urlValue = mysql.getJdbcUrl();
+            final String usernameKey = "spring.datasource.username";
+            final String usernameValue = mysql.getUsername();
+            final String passwordKey = "spring.datasource.password";
+            final String passwordValue = mysql.getPassword();
+            return Map.of(urlKey, urlValue, usernameKey, usernameValue, passwordKey, passwordValue);
         }
     }
 }

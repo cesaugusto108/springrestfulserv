@@ -1,6 +1,6 @@
 package augusto108.ces.springrestfulserv.assemblers;
 
-import augusto108.ces.springrestfulserv.controllers.GuestController;
+import augusto108.ces.springrestfulserv.controllers.GuestControllerImpl;
 import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +17,8 @@ public class GuestModelAssembler implements RepresentationModelAssembler<GuestDt
 
     @Override
     public @NotNull EntityModel<GuestDto> toModel(GuestDto guestDto) {
-        final Link fetchGuestLink = linkTo(methodOn(GuestController.class).fetchGuest(guestDto.getId())).withSelfRel();
-        final Link fetchAllGuestsLink = linkTo(methodOn(GuestController.class).fetchAllGuests()).withRel("guests");
+        final Link fetchGuestLink = linkTo(methodOn(GuestControllerImpl.class).fetchGuest(guestDto.getId())).withSelfRel();
+        final Link fetchAllGuestsLink = linkTo(methodOn(GuestControllerImpl.class).fetchAllGuests()).withRel("guests");
         EntityModel<GuestDto> guestEntityModel = EntityModel.of(guestDto, fetchGuestLink, fetchAllGuestsLink);
         confirmReserveStatus(guestDto, guestEntityModel);
         confirmCheckInStatus(guestDto, guestEntityModel);
@@ -26,13 +26,13 @@ public class GuestModelAssembler implements RepresentationModelAssembler<GuestDt
     }
 
     private static void confirmReserveStatus(GuestDto guestDto, EntityModel<GuestDto> guestDtoEntityModel) {
-        final Link checkInLink = linkTo(methodOn(GuestController.class).checkIn(guestDto.getId())).withRel("check-in");
-        final Link cancelReserveLink = linkTo(methodOn(GuestController.class).cancelReserve(guestDto.getId())).withRel("cancel-reserve");
+        final Link checkInLink = linkTo(methodOn(GuestControllerImpl.class).checkIn(guestDto.getId())).withRel("check-in");
+        final Link cancelReserveLink = linkTo(methodOn(GuestControllerImpl.class).cancelReserve(guestDto.getId())).withRel("cancel-reserve");
         if (guestDto.getStay() == Stay.RESERVED) guestDtoEntityModel.add(checkInLink, cancelReserveLink);
     }
 
     private static void confirmCheckInStatus(GuestDto guestDto, EntityModel<GuestDto> guestDtoEntityModel) {
-        final Link checkOutLink = linkTo(methodOn(GuestController.class).checkOut(guestDto.getId())).withRel("check-out");
+        final Link checkOutLink = linkTo(methodOn(GuestControllerImpl.class).checkOut(guestDto.getId())).withRel("check-out");
         if (guestDto.getStay() == Stay.CHECKED_IN) guestDtoEntityModel.add(checkOutLink);
     }
 }

@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @DisplayNameGeneration(DisplayNameGenerator.Simple.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class GuestControllerTest extends TestContainersConfiguration {
+class GuestControllerImplTest extends TestContainersConfiguration {
 
     @Autowired
     private MockMvc mockMvc;

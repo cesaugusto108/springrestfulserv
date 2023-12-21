@@ -1,28 +1,18 @@
 package augusto108.ces.springrestfulserv.model.dto.v1;
 
-import augusto108.ces.springrestfulserv.model.entities.Address;
-import augusto108.ces.springrestfulserv.model.entities.EmailAddress;
-import augusto108.ces.springrestfulserv.model.entities.Name;
-import augusto108.ces.springrestfulserv.model.entities.Telephone;
+import augusto108.ces.springrestfulserv.model.datatypes.Address;
+import augusto108.ces.springrestfulserv.model.datatypes.EmailAddress;
+import augusto108.ces.springrestfulserv.model.datatypes.Name;
+import augusto108.ces.springrestfulserv.model.datatypes.Telephone;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 
 public final class GuestDto extends BaseDto {
+
     private Name name;
     private Address address;
     private Telephone telephone;
     private EmailAddress emailAddress;
     private Stay stay;
-
-    public GuestDto() {
-    }
-
-    public GuestDto(Name name, Address address, Telephone telephone, EmailAddress emailAddress, Stay stay) {
-        this.name = name;
-        this.address = address;
-        this.telephone = telephone;
-        this.emailAddress = emailAddress;
-        this.stay = stay;
-    }
 
     public Name getName() {
         return name;
@@ -62,16 +52,5 @@ public final class GuestDto extends BaseDto {
 
     public void setStay(Stay stay) {
         this.stay = stay;
-    }
-
-    @Override
-    public String toString() {
-        return "GuestDto{" +
-                "name=" + name +
-                ", address=" + address +
-                ", telephone=" + telephone +
-                ", emailAddress=" + emailAddress +
-                ", stay=" + stay +
-                '}';
     }
 }

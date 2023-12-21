@@ -3,6 +3,7 @@ package augusto108.ces.springrestfulserv.model.dto.v1;
 import java.util.Objects;
 
 public abstract sealed class BaseDto permits GuestDto {
+
     private Long id;
 
     public Long getId() {

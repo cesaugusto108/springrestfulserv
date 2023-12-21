@@ -1,10 +1,11 @@
-package augusto108.ces.springrestfulserv.model.entities;
+package augusto108.ces.springrestfulserv.model.datatypes;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
 public final class EmailAddress {
+
     @Column(name = "guest_email_username")
     private String username;
 
@@ -19,7 +20,6 @@ public final class EmailAddress {
 
         if (!domainName.startsWith("@")) {
             this.domainName = "@" + domainName;
-
             return;
         }
 
@@ -41,7 +41,6 @@ public final class EmailAddress {
     public void setDomainName(String domainName) {
         if (!domainName.startsWith("@")) {
             this.domainName = "@" + domainName;
-
             return;
         }
 

@@ -1,6 +1,10 @@
 package augusto108.ces.springrestfulserv.services;
 
 import augusto108.ces.springrestfulserv.TestContainersConfiguration;
+import augusto108.ces.springrestfulserv.model.datatypes.Address;
+import augusto108.ces.springrestfulserv.model.datatypes.EmailAddress;
+import augusto108.ces.springrestfulserv.model.datatypes.Name;
+import augusto108.ces.springrestfulserv.model.datatypes.Telephone;
 import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
 import augusto108.ces.springrestfulserv.model.entities.*;
 import augusto108.ces.springrestfulserv.model.enums.Stay;

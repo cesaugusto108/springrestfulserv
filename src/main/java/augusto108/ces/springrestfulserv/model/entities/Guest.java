@@ -1,5 +1,9 @@
 package augusto108.ces.springrestfulserv.model.entities;
 
+import augusto108.ces.springrestfulserv.model.datatypes.Address;
+import augusto108.ces.springrestfulserv.model.datatypes.EmailAddress;
+import augusto108.ces.springrestfulserv.model.datatypes.Name;
+import augusto108.ces.springrestfulserv.model.datatypes.Telephone;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 
 import javax.persistence.*;
@@ -7,6 +11,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tb_guest")
 public final class Guest extends BaseEntity {
+
     @Embedded
     private Name name;
 
@@ -83,22 +88,5 @@ public final class Guest extends BaseEntity {
 
     public void setStay(Stay stay) {
         this.stay = stay;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() +
-                " - " +
-                name +
-                " [" +
-                address +
-                ", " +
-                telephone +
-                ", " +
-                email +
-                " (" +
-                emailAddress +
-                ")] Stay status: " +
-                stay;
     }
 }

@@ -3,7 +3,7 @@ package augusto108.ces.springrestfulserv.controllers;
 import augusto108.ces.springrestfulserv.assemblers.GuestModelAssembler;
 import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
 import augusto108.ces.springrestfulserv.model.entities.Guest;
-import augusto108.ces.springrestfulserv.model.entities.Name;
+import augusto108.ces.springrestfulserv.model.datatypes.Name;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
 import io.swagger.v3.oas.annotations.Operation;

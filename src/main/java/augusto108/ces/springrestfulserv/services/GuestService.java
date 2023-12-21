@@ -7,6 +7,7 @@ import augusto108.ces.springrestfulserv.model.datatypes.Name;
 import java.util.List;
 
 public interface GuestService {
+
     GuestDto fetchGuest(Long id);
 
     List<GuestDto> fetchGuests();

@@ -1,4 +1,4 @@
-package augusto108.ces.springrestfulserv.dto.v1;
+package augusto108.ces.springrestfulserv.model.dto.v1;
 
 import java.util.Objects;
 

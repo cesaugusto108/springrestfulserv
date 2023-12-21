@@ -1,4 +1,4 @@
-package augusto108.ces.springrestfulserv.controllers.handlers;
+package augusto108.ces.springrestfulserv.handlers;
 
 import augusto108.ces.springrestfulserv.exceptions.GuestNotFoundException;
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -1,11 +1,11 @@
 package augusto108.ces.springrestfulserv.controllers;
 
 import augusto108.ces.springrestfulserv.TestContainersConfiguration;
-import augusto108.ces.springrestfulserv.dto.v1.GuestDto;
-import augusto108.ces.springrestfulserv.entities.Address;
-import augusto108.ces.springrestfulserv.entities.Guest;
-import augusto108.ces.springrestfulserv.entities.Name;
-import augusto108.ces.springrestfulserv.entities.enums.Stay;
+import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
+import augusto108.ces.springrestfulserv.model.entities.Address;
+import augusto108.ces.springrestfulserv.model.entities.Guest;
+import augusto108.ces.springrestfulserv.model.entities.Name;
+import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;

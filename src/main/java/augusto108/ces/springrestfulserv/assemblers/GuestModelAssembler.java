@@ -1,8 +1,8 @@
-package augusto108.ces.springrestfulserv.controllers.helpers;
+package augusto108.ces.springrestfulserv.assemblers;
 
 import augusto108.ces.springrestfulserv.controllers.GuestController;
-import augusto108.ces.springrestfulserv.dto.v1.GuestDto;
-import augusto108.ces.springrestfulserv.entities.enums.Stay;
+import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
+import augusto108.ces.springrestfulserv.model.enums.Stay;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;

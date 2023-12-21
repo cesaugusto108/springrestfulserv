@@ -1,8 +1,8 @@
 package augusto108.ces.springrestfulserv.services;
 
-import augusto108.ces.springrestfulserv.dto.v1.GuestDto;
-import augusto108.ces.springrestfulserv.entities.Guest;
-import augusto108.ces.springrestfulserv.entities.Name;
+import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
+import augusto108.ces.springrestfulserv.model.entities.Guest;
+import augusto108.ces.springrestfulserv.model.entities.Name;
 
 import java.util.List;
 

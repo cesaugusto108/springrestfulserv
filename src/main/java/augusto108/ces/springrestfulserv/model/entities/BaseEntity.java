@@ -1,4 +1,4 @@
-package augusto108.ces.springrestfulserv.entities;
+package augusto108.ces.springrestfulserv.model.entities;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

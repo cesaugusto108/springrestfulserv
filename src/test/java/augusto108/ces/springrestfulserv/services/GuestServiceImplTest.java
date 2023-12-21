@@ -1,9 +1,9 @@
 package augusto108.ces.springrestfulserv.services;
 
 import augusto108.ces.springrestfulserv.TestContainersConfiguration;
-import augusto108.ces.springrestfulserv.dto.v1.GuestDto;
-import augusto108.ces.springrestfulserv.entities.*;
-import augusto108.ces.springrestfulserv.entities.enums.Stay;
+import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
+import augusto108.ces.springrestfulserv.model.entities.*;
+import augusto108.ces.springrestfulserv.model.enums.Stay;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

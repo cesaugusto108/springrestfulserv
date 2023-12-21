@@ -1,4 +1,4 @@
-package augusto108.ces.springrestfulserv.entities;
+package augusto108.ces.springrestfulserv.model.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

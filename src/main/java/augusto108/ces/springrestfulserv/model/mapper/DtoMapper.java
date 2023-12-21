@@ -1,7 +1,7 @@
-package augusto108.ces.springrestfulserv.mapper;
+package augusto108.ces.springrestfulserv.model.mapper;
 
-import augusto108.ces.springrestfulserv.dto.v1.GuestDto;
-import augusto108.ces.springrestfulserv.entities.Guest;
+import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
+import augusto108.ces.springrestfulserv.model.entities.Guest;
 
 import java.util.ArrayList;
 import java.util.List;

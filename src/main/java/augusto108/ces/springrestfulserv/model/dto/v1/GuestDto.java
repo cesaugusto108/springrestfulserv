@@ -1,38 +1,25 @@
-package augusto108.ces.springrestfulserv.entities;
+package augusto108.ces.springrestfulserv.model.dto.v1;
 
-import augusto108.ces.springrestfulserv.entities.enums.Stay;
+import augusto108.ces.springrestfulserv.model.entities.Address;
+import augusto108.ces.springrestfulserv.model.entities.EmailAddress;
+import augusto108.ces.springrestfulserv.model.entities.Name;
+import augusto108.ces.springrestfulserv.model.entities.Telephone;
+import augusto108.ces.springrestfulserv.model.enums.Stay;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "tb_guest")
-public final class Guest extends BaseEntity {
-    @Embedded
+public final class GuestDto extends BaseDto {
     private Name name;
-
-    @Embedded
     private Address address;
-
-    @Embedded
     private Telephone telephone;
-
-    @Column(name = "guest_email")
-    private String email;
-
-    @Embedded
     private EmailAddress emailAddress;
-
-    @Enumerated(EnumType.STRING)
     private Stay stay;
 
-    public Guest() {
+    public GuestDto() {
     }
 
-    public Guest(Name name, Address address, Telephone telephone, String email, EmailAddress emailAddress, Stay stay) {
+    public GuestDto(Name name, Address address, Telephone telephone, EmailAddress emailAddress, Stay stay) {
         this.name = name;
         this.address = address;
         this.telephone = telephone;
-        this.email = email;
         this.emailAddress = emailAddress;
         this.stay = stay;
     }
@@ -61,14 +48,6 @@ public final class Guest extends BaseEntity {
         this.telephone = telephone;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public EmailAddress getEmailAddress() {
         return emailAddress;
     }
@@ -87,18 +66,12 @@ public final class Guest extends BaseEntity {
 
     @Override
     public String toString() {
-        return super.toString() +
-                " - " +
-                name +
-                " [" +
-                address +
-                ", " +
-                telephone +
-                ", " +
-                email +
-                " (" +
-                emailAddress +
-                ")] Stay status: " +
-                stay;
+        return "GuestDto{" +
+                "name=" + name +
+                ", address=" + address +
+                ", telephone=" + telephone +
+                ", emailAddress=" + emailAddress +
+                ", stay=" + stay +
+                '}';
     }
 }

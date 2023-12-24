@@ -96,9 +96,7 @@ public class GuestControllerImpl implements GuestController {
     public ResponseEntity<EntityModel<GuestDto>> updateGuest(Long id, Guest guest) {
         final String msg = "URL id and request body id do not match. URL path id: " + id + ". Request body id: " + guest.getId();
         if (!guest.getId().equals(id)) throw new UnmatchedIdException(msg);
-        final Guest originalGuest = service.findGuestById(id);
-        BeanUtils.copyProperties(guest, originalGuest, "id");
-        final GuestDto updatedGuest = service.saveGuest(originalGuest);
+        final GuestDto updatedGuest = service.saveGuest(guest);
         final EntityModel<GuestDto> entityModel = assembler.toModel(updatedGuest);
         return ResponseEntity.status(200).body(entityModel);
     }

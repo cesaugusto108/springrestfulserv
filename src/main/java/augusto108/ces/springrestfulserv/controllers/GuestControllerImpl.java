@@ -85,8 +85,8 @@ public class GuestControllerImpl implements GuestController {
     @Override
     public ResponseEntity<EntityModel<GuestDto>> saveGuest(Guest guest) {
         guest.setStay(Stay.RESERVED);
-        final GuestDto dto = service.saveGuest(guest);
-        final EntityModel<GuestDto> entityModel = assembler.toModel(dto);
+        final GuestDto savedGuest = service.saveGuest(guest);
+        final EntityModel<GuestDto> entityModel = assembler.toModel(savedGuest);
         final String path = "/" + Objects.requireNonNull(entityModel.getContent()).getId().toString();
         final URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path(path).build().toUri();
         return ResponseEntity.status(201).location(uri).body(entityModel);

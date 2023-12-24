@@ -1,6 +1,7 @@
 package augusto108.ces.springrestfulserv.handlers;
 
 import augusto108.ces.springrestfulserv.exceptions.GuestNotFoundException;
+import augusto108.ces.springrestfulserv.exceptions.UnmatchedIdException;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
 import org.springframework.http.HttpHeaders;
@@ -47,9 +48,9 @@ public class ApplicationExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NumberFormatException.class)
+    @ExceptionHandler({NumberFormatException.class, UnmatchedIdException.class})
     @ResponseBody
-    public ResponseEntity<Problem> handleBadRequest(NumberFormatException e) {
+    public ResponseEntity<Problem> handleBadRequest(RuntimeException e) {
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         final ErrorResponse response = new ErrorResponse(badRequest, e.getMessage(), e.toString());
         final String contentType = HttpHeaders.CONTENT_TYPE;

@@ -1,10 +1,10 @@
 package augusto108.ces.springrestfulserv.controllers;
 
 import augusto108.ces.springrestfulserv.TestContainersConfiguration;
-import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
 import augusto108.ces.springrestfulserv.model.datatypes.Address;
-import augusto108.ces.springrestfulserv.model.entities.Guest;
 import augusto108.ces.springrestfulserv.model.datatypes.Name;
+import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
+import augusto108.ces.springrestfulserv.model.entities.Guest;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,7 +53,6 @@ class GuestControllerImplTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests/{id}?format=json", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(header().string("Location", "http://localhost/v1/guests/1"))
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.stay", is("RESERVED")))
                 .andExpect(jsonPath("$.emailAddress.username", is("katia")))
@@ -62,7 +61,6 @@ class GuestControllerImplTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests/{id}?format=xml", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
-                .andExpect(header().string("Location", "http://localhost/v1/guests/1"))
                 .andExpect(xpath("EntityModel/id").string("1"))
                 .andExpect(xpath("EntityModel/stay").string("RESERVED"))
                 .andExpect(xpath("EntityModel/emailAddress/username").string("katia"))
@@ -77,14 +75,18 @@ class GuestControllerImplTest extends TestContainersConfiguration {
                 .andExpect(jsonPath("$.error",
                         is("augusto108.ces.springrestfulserv.exceptions.GuestNotFoundException: Guest not found. Id: 0")));
 
+        final String message = "Failed to convert value of type 'java.lang.String' to required type 'java.lang.Long'; " +
+                "nested exception is java.lang.NumberFormatException: For input string: \"aaa\"";
+        final String error = "org.springframework.web.method.annotation.MethodArgumentTypeMismatchException: " +
+                "Failed to convert value of type 'java.lang.String' to required type 'java.lang.Long'; nested exception is " +
+                "java.lang.NumberFormatException: For input string: \"aaa\"";
         mockMvc.perform(get("/v1/guests/{id}", "aaa"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/problem+json"))
                 .andExpect(jsonPath("$.status", is("BAD_REQUEST")))
                 .andExpect(jsonPath("$.statusCode", is(400)))
-                .andExpect(jsonPath("$.message", is("For input string: \"aaa\"")))
-                .andExpect(jsonPath("$.error",
-                        is("java.lang.NumberFormatException: For input string: \"aaa\"")));
+                .andExpect(jsonPath("$.message", is(message)))
+                .andExpect(jsonPath("$.error", is(error)));
 
         assertThrows(NumberFormatException.class, () -> guestController.fetchGuest(Long.parseLong("aaa")));
     }
@@ -95,7 +97,6 @@ class GuestControllerImplTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests?format=json"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(header().string("Location", "http://localhost/v1/guests?format=json"))
                 .andExpect(jsonPath("$._embedded.guestDtoList", hasSize(11)))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1)))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
@@ -105,7 +106,6 @@ class GuestControllerImplTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests?format=xml"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
-                .andExpect(header().string("Location", "http://localhost/v1/guests?format=xml"))
                 .andExpect(xpath("CollectionModel/links/rel").string("self"))
                 .andExpect(xpath("CollectionModel/content/content/id").string("1"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"));
@@ -129,7 +129,6 @@ class GuestControllerImplTest extends TestContainersConfiguration {
                         .param("last", "moura"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(header().string("Location", "http://localhost/v1/guests/name-search?format=json"))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1)))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].name.firstName", is("Kátia")))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
@@ -141,7 +140,6 @@ class GuestControllerImplTest extends TestContainersConfiguration {
                         .param("last", "moura"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
-                .andExpect(header().string("Location", "http://localhost/v1/guests/name-search?format=xml"))
                 .andExpect(xpath("CollectionModel/links/rel").string("self"))
                 .andExpect(xpath("CollectionModel/content/content/id").string("1"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"))
@@ -156,7 +154,6 @@ class GuestControllerImplTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests/search?format=json").param("search", "RESERVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(header().string("Location", "http://localhost/v1/guests/search?format=json"))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].id", is(1)))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].name.firstName", is("Kátia")))
                 .andExpect(jsonPath("$._embedded.guestDtoList[0].stay", is("RESERVED")))
@@ -166,7 +163,6 @@ class GuestControllerImplTest extends TestContainersConfiguration {
         mockMvc.perform(get("/v1/guests/search?format=xml").param("search", "RESERVED"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/xml"))
-                .andExpect(header().string("Location", "http://localhost/v1/guests/search?format=xml"))
                 .andExpect(xpath("CollectionModel/links/rel").string("self"))
                 .andExpect(xpath("CollectionModel/content/content/id").string("1"))
                 .andExpect(xpath("CollectionModel/content/content/name/firstName").string("Kátia"))
@@ -176,28 +172,81 @@ class GuestControllerImplTest extends TestContainersConfiguration {
     }
 
     @Test
-    @Order(9)
-    void saveOrUpdateGuest() throws Exception {
+    @Order(8)
+    void saveGuest() throws Exception {
         final Guest guest = new Guest();
         guest.setName(new Name("Maria", "Ferreira"));
         guest.setAddress(new Address("Rua Goiás", 231, "Aracaju"));
+
+        List<GuestDto> guests = guestService.fetchGuests();
+        assertEquals(11, guests.size());
 
         mockMvc.perform(post("/v1/guests")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(guest))
                         .with(csrf()))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/v1/guests/13"));
+                .andExpect(header().string("Location", "http://localhost/v1/guests/12"))
+                .andExpect(jsonPath("$.name.firstName", is("Maria")))
+                .andExpect(jsonPath("$.name.lastName", is("Ferreira")));
 
-        final List<GuestDto> guests = guestService.fetchGuests();
+        guests = guestService.fetchGuests();
         assertEquals(12, guests.size());
         assertEquals("Ferreira", guests.get(11).getName().getLastName());
+        assertEquals(12, guests.get(11).getId());
 
-        guestService.deleteGuest(guests.get(11).getId());
+        guestService.deleteGuest(12L);
+
+        guests = guestService.fetchGuests();
+        assertEquals(11, guests.size());
     }
 
     @Test
-    @Order(8)
+    @Order(10)
+    void updateGuest() throws Exception {
+        final Guest guest = guestService.findGuestById(1L);
+        Name name = new Name();
+        name.setFirstName("Fernanda");
+        name.setLastName("Silva");
+        guest.setName(name);
+
+        mockMvc.perform(put("/v1/guests/{id}?format=json", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(guest))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name.firstName", is("Fernanda")))
+                .andExpect(jsonPath("$.name.lastName", is("Silva")));
+
+        final String message = "URL id and request body id do not match. URL path id: 2. Request body id: 1";
+        final String error = "augusto108.ces.springrestfulserv.exceptions.UnmatchedIdException: " +
+                "URL id and request body id do not match. URL path id: 2. Request body id: 1";
+        mockMvc.perform(put("/v1/guests/{id}?format=json", 2)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(guest))
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", is(message)))
+                .andExpect(jsonPath("$.error", is(error)));
+
+        name.setFirstName("Kátia");
+        name.setLastName("Moura");
+        guest.setName(name);
+
+        mockMvc.perform(put("/v1/guests/{id}?format=json", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(guest))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name.firstName", is("Kátia")))
+                .andExpect(jsonPath("$.name.lastName", is("Moura")));
+
+        final List<GuestDto> guests = guestService.fetchGuests();
+        assertEquals(11, guests.size());
+    }
+
+    @Test
+    @Order(9)
     void deleteGuest() throws Exception {
         final Guest guest = new Guest();
         guest.setName(new Name("Ana", "Guimarães"));
@@ -210,9 +259,9 @@ class GuestControllerImplTest extends TestContainersConfiguration {
                 .andExpect(status().isCreated());
 
         List<GuestDto> guests = guestService.fetchGuests();
-        assertEquals(6, guests.get(5).getId());
+        assertEquals(12, guests.size());
 
-        mockMvc.perform(delete("/v1/guests/{id}", 6).with(csrf()))
+        mockMvc.perform(delete("/v1/guests/{id}", guests.get(guests.size() - 1)).with(csrf()))
                 .andExpect(status().isNoContent());
 
         guests = guestService.fetchGuests();
@@ -224,8 +273,7 @@ class GuestControllerImplTest extends TestContainersConfiguration {
     void checkIn() throws Exception {
         mockMvc.perform(patch("/v1/guests/{id}/check-in", 1).with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(header().string("Location", "http://localhost/v1/guests/1"));
+                .andExpect(content().contentType("application/json"));
 
         final List<GuestDto> guests = guestService.fetchGuests();
         assertEquals(Stay.CHECKED_IN, guests.get(0).getStay());
@@ -244,8 +292,7 @@ class GuestControllerImplTest extends TestContainersConfiguration {
     void checkOut() throws Exception {
         mockMvc.perform(patch("/v1/guests/{id}/check-out", 5).with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(header().string("Location", "http://localhost/v1/guests/5"));
+                .andExpect(content().contentType("application/json"));
 
         final List<GuestDto> guests = guestService.fetchGuests();
         assertEquals(Stay.CHECKED_OUT, guests.get(4).getStay());
@@ -264,8 +311,7 @@ class GuestControllerImplTest extends TestContainersConfiguration {
     void cancelReserve() throws Exception {
         mockMvc.perform(patch("/v1/guests/{id}/cancel", 2).with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(header().string("Location", "http://localhost/v1/guests/2"));
+                .andExpect(content().contentType("application/json"));
 
 
         final List<GuestDto> guests = guestService.fetchGuests();

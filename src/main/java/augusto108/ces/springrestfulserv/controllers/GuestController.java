@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Tag(name = "Guest Tracker", description = "manages information about hotel guests")
 @RequestMapping("/v1/guests")
 public interface GuestController {
@@ -42,12 +44,19 @@ public interface GuestController {
     );
 
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "save or update guest")
-    @RequestMapping(
-            method = {RequestMethod.POST, RequestMethod.PUT},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
-    )
-    ResponseEntity<EntityModel<GuestDto>> saveOrUpdateGuest(@RequestBody Guest guest);
+    @Operation(summary = "save guest")
+    @PostMapping(
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    ResponseEntity<EntityModel<GuestDto>> saveGuest(@RequestBody Guest guest);
+
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "update guest")
+    @PutMapping(
+            value = "/{id}",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    ResponseEntity<EntityModel<GuestDto>> updateGuest(@PathVariable("id") Long id, @RequestBody Guest guest);
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "delete guest")

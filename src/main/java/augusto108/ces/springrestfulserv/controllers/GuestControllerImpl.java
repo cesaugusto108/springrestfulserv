@@ -7,7 +7,6 @@ import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
 import augusto108.ces.springrestfulserv.model.entities.Guest;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -18,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -101,7 +99,7 @@ public class GuestControllerImpl implements GuestController {
         return ResponseEntity.status(200).body(entityModel);
     }
 
-    public ResponseEntity<EntityModel<Link>> deleteGuest(Long id) {
+    public ResponseEntity<Void> deleteGuest(Long id) {
         service.deleteGuest(id);
         return ResponseEntity.status(204).build();
     }

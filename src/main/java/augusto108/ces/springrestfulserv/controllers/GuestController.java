@@ -6,13 +6,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Tag(name = "Guest Tracker", description = "manages information about hotel guests")
 @RequestMapping("/v1/guests")
@@ -61,17 +58,17 @@ public interface GuestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "delete guest")
     @DeleteMapping(value = "/{id}")
-    ResponseEntity<EntityModel<Link>> deleteGuest(@PathVariable Long id);
+    ResponseEntity<Void> deleteGuest(@PathVariable Long id);
 
     @Operation(summary = "guest check in")
-    @PatchMapping(value = "/{id}/check-in",produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PatchMapping(value = "/{id}/check-in", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     ResponseEntity<?> checkIn(@PathVariable Long id);
 
     @Operation(summary = "guest check out")
-    @PatchMapping(value = "/{id}/check-out",produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PatchMapping(value = "/{id}/check-out", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     ResponseEntity<?> checkOut(@PathVariable Long id);
 
     @Operation(summary = "cancel guest's reserve")
-    @PatchMapping(value = "/{id}/cancel",produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PatchMapping(value = "/{id}/cancel", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     ResponseEntity<?> cancelReserve(@PathVariable Long id);
 }

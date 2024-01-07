@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjdk-debian
+FROM eclipse-temurin:17.0.9_9-jre
 VOLUME /tmp
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar

@@ -7,6 +7,7 @@ import augusto108.ces.springrestfulserv.model.entities.Guest;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.model.mapper.DtoMapper;
 import augusto108.ces.springrestfulserv.repositories.GuestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class GuestServiceImpl implements GuestService {
 
     private final GuestRepository repository;
 
+    @Autowired
     public GuestServiceImpl(GuestRepository repository) {
         this.repository = repository;
     }

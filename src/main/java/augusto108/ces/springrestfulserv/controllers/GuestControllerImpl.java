@@ -7,6 +7,7 @@ import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
 import augusto108.ces.springrestfulserv.model.entities.Guest;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 import augusto108.ces.springrestfulserv.services.GuestService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
@@ -34,6 +35,7 @@ public class GuestControllerImpl implements GuestController {
     private final GuestService service;
     private final GuestModelAssembler assembler;
 
+    @Autowired
     public GuestControllerImpl(GuestService service, GuestModelAssembler assembler) {
         this.service = service;
         this.assembler = assembler;

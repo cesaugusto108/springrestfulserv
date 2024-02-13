@@ -5,6 +5,7 @@ import augusto108.ces.springrestfulserv.model.datatypes.EmailAddress;
 import augusto108.ces.springrestfulserv.model.datatypes.Name;
 import augusto108.ces.springrestfulserv.model.datatypes.Telephone;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import javax.persistence.*;
 
@@ -33,6 +34,7 @@ public final class Guest extends BaseEntity {
     public Guest() {
     }
 
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
     public Guest(Name name, Address address, Telephone telephone, String email, EmailAddress emailAddress, Stay stay) {
         this.name = name;
         this.address = address;

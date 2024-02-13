@@ -6,7 +6,7 @@ import augusto108.ces.springrestfulserv.model.datatypes.EmailAddress;
 import augusto108.ces.springrestfulserv.model.datatypes.Name;
 import augusto108.ces.springrestfulserv.model.datatypes.Telephone;
 import augusto108.ces.springrestfulserv.model.dto.v1.GuestDto;
-import augusto108.ces.springrestfulserv.model.entities.*;
+import augusto108.ces.springrestfulserv.model.entities.Guest;
 import augusto108.ces.springrestfulserv.model.enums.Stay;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GuestServiceImplTest extends TestContainersConfiguration {
 
+    private final GuestService guestService;
+
     @Autowired
-    private GuestService guestService;
+    public GuestServiceImplTest(GuestService guestService) {
+        this.guestService = guestService;
+    }
 
     @Test
     @Order(1)

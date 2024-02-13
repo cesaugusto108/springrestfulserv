@@ -35,17 +35,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GuestControllerImplTest extends TestContainersConfiguration {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
+
+    private final ObjectMapper objectMapper;
+
+    private final GuestController guestController;
+
+    private final GuestService guestService;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private GuestController guestController;
-
-    @Autowired
-    private GuestService guestService;
+    GuestControllerImplTest(MockMvc mockMvc,
+                            ObjectMapper objectMapper,
+                            GuestController guestController,
+                            GuestService guestService) {
+        this.mockMvc = mockMvc;
+        this.objectMapper = objectMapper;
+        this.guestController = guestController;
+        this.guestService = guestService;
+    }
 
     @Test
     @Order(1)
